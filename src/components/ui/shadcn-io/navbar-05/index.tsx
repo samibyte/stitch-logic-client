@@ -141,10 +141,10 @@ const NotificationMenu = ({
 }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
-      <Button variant="ghost" size="icon" className="h-9 w-9 relative">
+      <Button variant="ghost" size="icon" className="relative h-9 w-9">
         <BellIcon className="h-4 w-4" />
         {notificationCount > 0 && (
-          <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+          <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center p-0 text-xs">
             {notificationCount > 9 ? "9+" : notificationCount}
           </Badge>
         )}
@@ -157,19 +157,19 @@ const NotificationMenu = ({
       <DropdownMenuItem onClick={() => onItemClick?.("notification1")}>
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">New message received</p>
-          <p className="text-xs text-muted-foreground">2 minutes ago</p>
+          <p className="text-muted-foreground text-xs">2 minutes ago</p>
         </div>
       </DropdownMenuItem>
       <DropdownMenuItem onClick={() => onItemClick?.("notification2")}>
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">System update available</p>
-          <p className="text-xs text-muted-foreground">1 hour ago</p>
+          <p className="text-muted-foreground text-xs">1 hour ago</p>
         </div>
       </DropdownMenuItem>
       <DropdownMenuItem onClick={() => onItemClick?.("notification3")}>
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">Weekly report ready</p>
-          <p className="text-xs text-muted-foreground">3 hours ago</p>
+          <p className="text-muted-foreground text-xs">3 hours ago</p>
         </div>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
@@ -196,7 +196,7 @@ const UserMenu = ({
     <DropdownMenuTrigger asChild>
       <Button
         variant="ghost"
-        className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground"
+        className="hover:bg-accent hover:text-accent-foreground h-9 px-2 py-0"
       >
         <Avatar className="h-7 w-7">
           <AvatarImage src={userAvatar} alt={userName} />
@@ -207,15 +207,15 @@ const UserMenu = ({
               .join("")}
           </AvatarFallback>
         </Avatar>
-        <ChevronDownIcon className="h-3 w-3 ml-1" />
+        <ChevronDownIcon className="ml-1 h-3 w-3" />
         <span className="sr-only">User menu</span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" className="w-56">
       <DropdownMenuLabel>
         <div className="flex flex-col space-y-1">
-          <p className="text-sm font-medium leading-none">{userName}</p>
-          <p className="text-xs leading-none text-muted-foreground">
+          <p className="text-sm leading-none font-medium">{userName}</p>
+          <p className="text-muted-foreground text-xs leading-none">
             {userEmail}
           </p>
         </div>
@@ -283,7 +283,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
       onUserItemClick,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
@@ -318,15 +318,15 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
           ref.current = node;
         }
       },
-      [ref]
+      [ref],
     );
 
     return (
       <header
         ref={combinedRef}
         className={cn(
-          "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6 [&_*]:no-underline",
-          className
+          "bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b px-4 backdrop-blur md:px-6 [&_*]:no-underline",
+          className,
         )}
         {...(props as any)}
       >
@@ -338,7 +338,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
-                    className="group h-9 w-9 hover:bg-accent hover:text-accent-foreground"
+                    className="group hover:bg-accent hover:text-accent-foreground h-9 w-9"
                     variant="ghost"
                     size="icon"
                   >
@@ -356,7 +356,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                               if (onNavItemClick && link.href)
                                 onNavItemClick(link.href);
                             }}
-                            className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer no-underline"
+                            className="hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full cursor-pointer items-center rounded-md px-3 py-2 text-sm font-medium no-underline transition-colors"
                           >
                             {link.label}
                           </button>
@@ -371,10 +371,10 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
             <div className="flex items-center gap-6">
               <button
                 onClick={(e) => e.preventDefault()}
-                className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
+                className="text-primary hover:text-primary/90 flex cursor-pointer items-center space-x-2 transition-colors"
               >
                 <div className="text-2xl">{logo}</div>
-                <span className="hidden font-bold text-xl sm:inline-block">
+                <span className="hidden text-xl font-bold sm:inline-block">
                   shadcn.io
                 </span>
               </button>
@@ -391,7 +391,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                             if (onNavItemClick && link.href)
                               onNavItemClick(link.href);
                           }}
-                          className="text-muted-foreground hover:text-primary py-1.5 font-medium transition-colors cursor-pointer group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                          className="text-muted-foreground hover:text-primary group bg-background focus:bg-accent focus:text-accent-foreground inline-flex h-10 w-max cursor-pointer items-center justify-center rounded-md px-4 py-1.5 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50"
                         >
                           {link.label}
                         </NavigationMenuLink>
@@ -424,7 +424,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
         </div>
       </header>
     );
-  }
+  },
 );
 
 Navbar05.displayName = "Navbar05";

@@ -8,7 +8,7 @@ const RootLayout = () => {
       <header>
         <Navbar />
       </header>
-      <main className="min-h-full mt-36">
+      <main className="mx-auto mt-36 min-h-full max-w-11/12 md:max-w-9/12">
         <Outlet />
       </main>
       <Footer />
