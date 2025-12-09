@@ -1,13 +1,6 @@
-"use client";
-
 import * as React from "react";
 import { useEffect, useState, useRef } from "react";
-import {
-  BellIcon,
-  HelpCircleIcon,
-  UserIcon,
-  ChevronDownIcon,
-} from "lucide-react";
+import { BellIcon, HelpCircleIcon, ChevronDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -31,46 +24,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { ComponentProps } from "react";
-
-// Simple logo component for the navbar
-const Logo = (props: React.SVGAttributes<SVGElement>) => {
-  return (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 324 323"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...(props as any)}
-    >
-      <rect
-        x="88.1023"
-        y="144.792"
-        width="151.802"
-        height="36.5788"
-        rx="18.2894"
-        transform="rotate(-38.5799 88.1023 144.792)"
-        fill="currentColor"
-      />
-      <rect
-        x="85.3459"
-        y="244.537"
-        width="151.802"
-        height="36.5788"
-        rx="18.2894"
-        transform="rotate(-38.5799 85.3459 244.537)"
-        fill="currentColor"
-      />
-    </svg>
-  );
-};
+import { Link, NavLink } from "react-router";
 
 // Hamburger icon component
 const HamburgerIcon = ({
   className,
   ...props
-}: React.SVGAttributes<SVGElement>) => (
+}: React.SVGProps<SVGSVGElement>) => (
   <svg
     className={cn("pointer-events-none", className)}
     width={16}
@@ -82,7 +42,7 @@ const HamburgerIcon = ({
     strokeLinecap="round"
     strokeLinejoin="round"
     xmlns="http://www.w3.org/2000/svg"
-    {...(props as any)}
+    {...props}
   >
     <path
       d="M4 12L20 12"
@@ -100,11 +60,7 @@ const HamburgerIcon = ({
 );
 
 // Info Menu Component
-const InfoMenu = ({
-  onItemClick,
-}: {
-  onItemClick?: (item: string) => void;
-}) => (
+const InfoMenu = () => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <Button variant="ghost" size="icon" className="h-9 w-9">
@@ -115,18 +71,10 @@ const InfoMenu = ({
     <DropdownMenuContent align="end" className="w-56">
       <DropdownMenuLabel>Help & Support</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.("help")}>
-        Help Center
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.("documentation")}>
-        Documentation
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.("contact")}>
-        Contact Support
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.("feedback")}>
-        Send Feedback
-      </DropdownMenuItem>
+      <DropdownMenuItem>Help Center</DropdownMenuItem>
+      <DropdownMenuItem>Documentation</DropdownMenuItem>
+      <DropdownMenuItem>Contact Support</DropdownMenuItem>
+      <DropdownMenuItem>Send Feedback</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 );
@@ -134,10 +82,8 @@ const InfoMenu = ({
 // Notification Menu Component
 const NotificationMenu = ({
   notificationCount = 3,
-  onItemClick,
 }: {
   notificationCount?: number;
-  onItemClick?: (item: string) => void;
 }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
@@ -154,28 +100,26 @@ const NotificationMenu = ({
     <DropdownMenuContent align="end" className="w-80">
       <DropdownMenuLabel>Notifications</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.("notification1")}>
+      <DropdownMenuItem>
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">New message received</p>
           <p className="text-muted-foreground text-xs">2 minutes ago</p>
         </div>
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.("notification2")}>
+      <DropdownMenuItem>
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">System update available</p>
           <p className="text-muted-foreground text-xs">1 hour ago</p>
         </div>
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.("notification3")}>
+      <DropdownMenuItem>
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">Weekly report ready</p>
           <p className="text-muted-foreground text-xs">3 hours ago</p>
         </div>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.("view-all")}>
-        View all notifications
-      </DropdownMenuItem>
+      <DropdownMenuItem>View all notifications</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 );
@@ -185,12 +129,10 @@ const UserMenu = ({
   userName = "John Doe",
   userEmail = "john@example.com",
   userAvatar,
-  onItemClick,
 }: {
   userName?: string;
   userEmail?: string;
   userAvatar?: string;
-  onItemClick?: (item: string) => void;
 }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
@@ -221,212 +163,193 @@ const UserMenu = ({
         </div>
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.("profile")}>
-        Profile
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.("settings")}>
-        Settings
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.("billing")}>
-        Billing
-      </DropdownMenuItem>
+      <DropdownMenuItem>Profile</DropdownMenuItem>
+      <DropdownMenuItem>Settings</DropdownMenuItem>
+      <DropdownMenuItem>Billing</DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.("logout")}>
-        Log out
-      </DropdownMenuItem>
+      <DropdownMenuItem>Log out</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 );
 
-// Types
-export interface Navbar05NavItem {
-  href?: string;
-  label: string;
-}
+export const Navbar05 = React.forwardRef<
+  HTMLElement,
+  React.HTMLAttributes<HTMLElement>
+>(({ className, ...props }, ref) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const containerRef = useRef<HTMLElement>(null);
 
-export interface Navbar05Props extends React.HTMLAttributes<HTMLElement> {
-  logo?: React.ReactNode;
-  logoHref?: string;
-  navigationLinks?: Navbar05NavItem[];
-  userName?: string;
-  userEmail?: string;
-  userAvatar?: string;
-  notificationCount?: number;
-  onNavItemClick?: (href: string) => void;
-  onInfoItemClick?: (item: string) => void;
-  onNotificationItemClick?: (item: string) => void;
-  onUserItemClick?: (item: string) => void;
-}
+  useEffect(() => {
+    const checkWidth = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
 
-// Default navigation links
-const defaultNavigationLinks: Navbar05NavItem[] = [
-  { href: "#", label: "Home" },
-  { href: "#", label: "Features" },
-  { href: "#", label: "Pricing" },
-  { href: "#", label: "About" },
-];
+    // Initial check
+    checkWidth();
 
-export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
-  (
-    {
-      className,
-      logo = <Logo />,
-      logoHref = "#",
-      navigationLinks = defaultNavigationLinks,
-      userName = "John Doe",
-      userEmail = "john@example.com",
-      userAvatar,
-      notificationCount = 3,
-      onNavItemClick,
-      onInfoItemClick,
-      onNotificationItemClick,
-      onUserItemClick,
-      ...props
-    },
-    ref,
-  ) => {
-    const [isMobile, setIsMobile] = useState(false);
-    const containerRef = useRef<HTMLElement>(null);
+    // Add event listener for window resize
+    window.addEventListener("resize", checkWidth);
 
-    useEffect(() => {
-      const checkWidth = () => {
-        if (containerRef.current) {
-          const width = containerRef.current.offsetWidth;
-          setIsMobile(width < 768); // 768px is md breakpoint
-        }
-      };
+    return () => {
+      window.removeEventListener("resize", checkWidth);
+    };
+  }, []);
 
-      checkWidth();
+  // Combine refs
+  const setRefs = React.useCallback(
+    (node: HTMLElement | null) => {
+      containerRef.current = node;
 
-      const resizeObserver = new ResizeObserver(checkWidth);
-      if (containerRef.current) {
-        resizeObserver.observe(containerRef.current);
-      }
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }, []);
-
-    // Combine refs
-    const combinedRef = React.useCallback(
-      (node: HTMLElement | null) => {
-        containerRef.current = node;
+      if (ref) {
         if (typeof ref === "function") {
           ref(node);
-        } else if (ref) {
+        } else {
           ref.current = node;
         }
-      },
-      [ref],
-    );
+      }
+    },
+    [ref],
+  );
 
-    return (
-      <header
-        ref={combinedRef}
-        className={cn(
-          "bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b px-4 backdrop-blur md:px-6 [&_*]:no-underline",
-          className,
-        )}
-        {...(props as any)}
-      >
-        <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-4">
-          {/* Left side */}
-          <div className="flex items-center gap-2">
-            {/* Mobile menu trigger */}
-            {isMobile && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    className="group hover:bg-accent hover:text-accent-foreground h-9 w-9"
-                    variant="ghost"
-                    size="icon"
-                  >
-                    <HamburgerIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="start" className="w-64 p-1">
-                  <NavigationMenu className="max-w-none">
-                    <NavigationMenuList className="flex-col items-start gap-0">
-                      {navigationLinks.map((link, index) => (
-                        <NavigationMenuItem key={index} className="w-full">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (onNavItemClick && link.href)
-                                onNavItemClick(link.href);
-                            }}
-                            className="hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full cursor-pointer items-center rounded-md px-3 py-2 text-sm font-medium no-underline transition-colors"
-                          >
-                            {link.label}
-                          </button>
-                        </NavigationMenuItem>
-                      ))}
-                    </NavigationMenuList>
-                  </NavigationMenu>
-                </PopoverContent>
-              </Popover>
-            )}
-            {/* Main nav */}
-            <div className="flex items-center gap-6">
-              <button
-                onClick={(e) => e.preventDefault()}
-                className="text-primary hover:text-primary/90 flex cursor-pointer items-center space-x-2 transition-colors"
-              >
-                <div className="text-2xl">{logo}</div>
-                <span className="hidden text-xl font-bold sm:inline-block">
-                  shadcn.io
-                </span>
-              </button>
-              {/* Navigation menu */}
-              {!isMobile && (
-                <NavigationMenu className="flex">
-                  <NavigationMenuList className="gap-1">
-                    {navigationLinks.map((link, index) => (
-                      <NavigationMenuItem key={index}>
-                        <NavigationMenuLink
-                          href={link.href}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (onNavItemClick && link.href)
-                              onNavItemClick(link.href);
-                          }}
-                          className="text-muted-foreground hover:text-primary group bg-background focus:bg-accent focus:text-accent-foreground inline-flex h-10 w-max cursor-pointer items-center justify-center rounded-md px-4 py-1.5 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+  const navigationLinks = [
+    { href: "/", label: "Home" },
+    { href: "/all-products", label: "All Products" },
+    { href: "/contact", label: "Contact" },
+    { href: "/about-us", label: "About Us" },
+  ];
+
+  const userName = "John Doe";
+  const userEmail = "john@example.com";
+  const userAvatar = "";
+  const notificationCount = 3;
+  const user = false;
+
+  return (
+    <header
+      ref={setRefs}
+      className={cn(
+        "bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b px-4 backdrop-blur md:px-6",
+        className,
+      )}
+      {...props}
+    >
+      <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-4">
+        {/* Left side */}
+        <div className="flex items-center gap-2">
+          {/* Mobile menu trigger */}
+          {isMobile && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  className="group hover:bg-accent hover:text-accent-foreground h-9 w-9"
+                  variant="ghost"
+                  size="icon"
+                >
+                  <HamburgerIcon />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-64 p-1">
+                <NavigationMenu className="max-w-none">
+                  <NavigationMenuList className="flex flex-col items-start gap-0">
+                    {navigationLinks.map((link) => (
+                      <NavigationMenuItem key={link.href} className="w-full">
+                        <NavLink
+                          to={link.href}
+                          className={({ isActive }) =>
+                            cn(
+                              "flex w-full cursor-pointer items-center rounded-md px-3 py-2 text-sm font-medium no-underline transition-colors",
+                              isActive
+                                ? "bg-accent text-accent-foreground"
+                                : "hover:bg-accent hover:text-accent-foreground",
+                            )
+                          }
                         >
                           {link.label}
-                        </NavigationMenuLink>
+                        </NavLink>
                       </NavigationMenuItem>
                     ))}
                   </NavigationMenuList>
                 </NavigationMenu>
-              )}
-            </div>
-          </div>
-          {/* Right side */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              {/* Info menu */}
-              <InfoMenu onItemClick={onInfoItemClick} />
-              {/* Notification */}
-              <NotificationMenu
-                notificationCount={notificationCount}
-                onItemClick={onNotificationItemClick}
-              />
-            </div>
-            {/* User menu */}
-            <UserMenu
-              userName={userName}
-              userEmail={userEmail}
-              userAvatar={userAvatar}
-              onItemClick={onUserItemClick}
-            />
-          </div>
+              </PopoverContent>
+            </Popover>
+          )}
+          <NavLink
+            to="/"
+            className="text-primary hover:text-primary/90 flex cursor-pointer items-center space-x-2 transition-colors"
+          >
+            <span className="hidden text-xl font-bold sm:inline-block">
+              shadcn.io
+            </span>
+          </NavLink>
         </div>
-      </header>
-    );
-  },
-);
+        {/* Right side */}
+        <div className="flex items-center gap-4">
+          {/* Desktop navigation menu */}
+          {!isMobile && (
+            <NavigationMenu>
+              <NavigationMenuList className="gap-1">
+                {navigationLinks.map((link) => (
+                  <NavigationMenuItem key={link.href}>
+                    <NavigationMenuLink asChild>
+                      <NavLink
+                        to={link.href}
+                        className={({ isActive }) =>
+                          cn(
+                            "bg-background hover:text-primary focus:bg-accent focus:text-accent-foreground inline-flex h-10 w-max cursor-pointer items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                            isActive ? "text-primary" : "text-muted-foreground",
+                          )
+                        }
+                      >
+                        {link.label}
+                      </NavLink>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
+          )}
+          {user ? (
+            <>
+              <div className="flex items-center gap-2">
+                <InfoMenu />
+                <NotificationMenu notificationCount={notificationCount} />
+              </div>
+              <UserMenu
+                userName={userName}
+                userEmail={userEmail}
+                userAvatar={userAvatar}
+              />
+            </>
+          ) : (
+            <>
+              <>
+                <Link to="/login">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="cursor-pointer text-sm"
+                  >
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="cursor-pointer text-sm"
+                  >
+                    Register
+                  </Button>
+                </Link>
+              </>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+});
 
 Navbar05.displayName = "Navbar05";
 
-export { Logo, HamburgerIcon, InfoMenu, NotificationMenu, UserMenu };
+export { HamburgerIcon, InfoMenu, NotificationMenu, UserMenu };
