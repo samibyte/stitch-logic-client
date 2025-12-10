@@ -64,7 +64,7 @@ const Register = () => {
 
       let photoURL = null;
 
-      await createUser(email, password);
+      const response = await createUser(email, password);
 
       // If a photo was uploaded
       if (photo && photo.length > 0) {
@@ -80,6 +80,7 @@ const Register = () => {
       }
 
       const userInfo = {
+        firebaseUid: response.user.uid,
         displayName: fullName,
         email,
         photoURL: photoURL,
