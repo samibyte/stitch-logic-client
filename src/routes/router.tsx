@@ -12,6 +12,7 @@ import AdminRouter from "./AdminRouter";
 import PrivateRouter from "./PrivateRouter";
 import ManagerRouter from "./ManagerRouter";
 import AddProduct from "@/pages/Dashboard/Manager/AddProduct";
+import ManageProducts from "@/pages/Dashboard/Manager/ManageProducts";
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +76,14 @@ export const router = createBrowserRouter([
         element: (
           <ManagerRouter>
             <AddProduct />
+          </ManagerRouter>
+        ),
+      },
+      {
+        path: "manage-products",
+        element: (
+          <ManagerRouter>
+            <ManageProducts />
           </ManagerRouter>
         ),
       },

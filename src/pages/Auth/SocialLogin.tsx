@@ -12,12 +12,13 @@ const SocialLogin = () => {
 
   async function handleGoogleLogin() {
     try {
-      const result = await signInWithGoogle();
+      const response = await signInWithGoogle();
 
       const userInfo = {
-        email: result.user.email,
-        displayName: result.user.displayName,
-        photoURL: result.user.photoURL,
+        firebaseUid: response.user.uid,
+        email: response.user.email,
+        displayName: response.user.displayName,
+        photoURL: response.user.photoURL,
       };
 
       const res = await axiosSecure.post("/users", userInfo);

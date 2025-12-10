@@ -67,15 +67,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     manager: [
       {
-        title: "Add Product",
-        url: "/dashboard/add-product",
-        icon: Package,
-      },
-      {
         title: "Manage Products",
         url: "/dashboard/manage-products",
         icon: ShoppingCart,
       },
+      {
+        title: "Add Product",
+        url: "/dashboard/add-product",
+        icon: Package,
+      },
+
       {
         title: "Pending Orders",
         url: "/dashboard/pending-orders",
