@@ -5,10 +5,11 @@ import { Outlet } from "react-router";
 export default function DashboardLayout() {
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full overflow-hidden">
         <AppSidebar />
-        <SidebarInset>
-          <div className="m-2 flex-1 rounded-xl border">
+
+        <SidebarInset className="flex-1 overflow-hidden">
+          <div className="m-2 h-full overflow-y-auto rounded-xl border">
             <Outlet />
           </div>
         </SidebarInset>
