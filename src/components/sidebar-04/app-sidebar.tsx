@@ -49,6 +49,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navItems: Record<Exclude<Role, undefined>, NavItem[]> = {
     admin: [
       {
+        title: "Manage Users",
+        url: "/dashboard/users-management",
+        icon: Users,
+      },
+      {
         title: "All Products",
         url: "/dashboard/all-products-management",
         icon: Package,
@@ -57,11 +62,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "All Orders",
         url: "/dashboard/all-orders-management",
         icon: ShoppingCart,
-      },
-      {
-        title: "Manage Users",
-        url: "/dashboard/users-management",
-        icon: Users,
       },
     ],
 

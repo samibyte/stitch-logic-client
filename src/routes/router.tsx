@@ -8,6 +8,8 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import UsersManagement from "@/pages/Dashboard/Admin/UsersManagement";
 import AllProductsManagement from "@/pages/Dashboard/Admin/AllProductsManagement";
 import AllOrdersManagement from "@/pages/Dashboard/Admin/AllOrdersManagement";
+import AdminRouter from "./AdminRouter";
+import PrivateRouter from "./PrivateRouter";
 
 export const router = createBrowserRouter([
   {
@@ -36,19 +38,35 @@ export const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    Component: DashboardLayout,
+    element: (
+      <PrivateRouter>
+        <DashboardLayout />
+      </PrivateRouter>
+    ),
     children: [
       {
         path: "users-management",
-        Component: UsersManagement,
+        element: (
+          <AdminRouter>
+            <UsersManagement />
+          </AdminRouter>
+        ),
       },
       {
         path: "all-products-management",
-        Component: AllProductsManagement,
+        element: (
+          <AdminRouter>
+            <AllProductsManagement />
+          </AdminRouter>
+        ),
       },
       {
         path: "all-orders-management",
-        Component: AllOrdersManagement,
+        element: (
+          <AdminRouter>
+            <AllOrdersManagement />
+          </AdminRouter>
+        ),
       },
     ],
   },
