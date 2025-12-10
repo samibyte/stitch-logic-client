@@ -25,6 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Link, NavLink } from "react-router";
+import useAuth from "@/hooks/useAuth";
 
 // Hamburger icon component
 const HamburgerIcon = ({
@@ -133,44 +134,49 @@ const UserMenu = ({
   userName?: string;
   userEmail?: string;
   userAvatar?: string;
-}) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button
-        variant="ghost"
-        className="hover:bg-accent hover:text-accent-foreground h-9 px-2 py-0"
-      >
-        <Avatar className="h-7 w-7">
-          <AvatarImage src={userAvatar} alt={userName} />
-          <AvatarFallback className="text-xs">
-            {userName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </AvatarFallback>
-        </Avatar>
-        <ChevronDownIcon className="ml-1 h-3 w-3" />
-        <span className="sr-only">User menu</span>
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" className="w-56">
-      <DropdownMenuLabel>
-        <div className="flex flex-col space-y-1">
-          <p className="text-sm leading-none font-medium">{userName}</p>
-          <p className="text-muted-foreground text-xs leading-none">
-            {userEmail}
-          </p>
-        </div>
-      </DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem>Profile</DropdownMenuItem>
-      <DropdownMenuItem>Settings</DropdownMenuItem>
-      <DropdownMenuItem>Billing</DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem>Log out</DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
+}) => {
+  const { signOutUser } = useAuth();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="hover:bg-accent hover:text-accent-foreground h-9 px-2 py-0"
+        >
+          <Avatar className="h-7 w-7">
+            <AvatarImage src={userAvatar} alt={userName} />
+            <AvatarFallback className="text-xs">
+              {userName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
+          <ChevronDownIcon className="ml-1 h-3 w-3" />
+          <span className="sr-only">User menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm leading-none font-medium">{userName}</p>
+            <p className="text-muted-foreground text-xs leading-none">
+              {userEmail}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem>Settings</DropdownMenuItem>
+        <DropdownMenuItem>Billing</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => signOutUser()}>
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 export const Navbar05 = React.forwardRef<
   HTMLElement,
@@ -211,19 +217,24 @@ export const Navbar05 = React.forwardRef<
     [ref],
   );
 
-  const navigationLinks = [
-    { href: "/", label: "Home" },
-    { href: "/all-products", label: "All Products" },
-    { href: "/contact", label: "Contact" },
-    { href: "/about-us", label: "About Us" },
-  ];
-
-  const userName = "John Doe";
-  const userEmail = "john@example.com";
-  const userAvatar = "";
+  const { user } = useAuth();
+  const userName = user?.displayName || "username";
+  const userEmail = user?.email || "useremail";
+  const userAvatar = user?.photoURL || "photoUrl";
   const notificationCount = 3;
-  const user = false;
 
+  const navigationLinks = user
+    ? [
+        { href: "/", label: "Home" },
+        { href: "/all-products", label: "All Products" },
+        { href: "/dashboard", label: "Dashboard" },
+      ]
+    : [
+        { href: "/", label: "Home" },
+        { href: "/all-products", label: "All Products" },
+        { href: "/contact", label: "Contact" },
+        { href: "/about-us", label: "About Us" },
+      ];
   return (
     <header
       ref={setRefs}

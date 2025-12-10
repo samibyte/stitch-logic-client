@@ -4,6 +4,10 @@ import AuthLayout from "@/layouts/AuthLayout";
 import Home from "@/pages/Home/Home/Home";
 import Login from "@/pages/Auth/Login";
 import Register from "@/pages/Auth/Register";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import UsersManagement from "@/pages/Dashboard/Admin/UsersManagement";
+import AllProductsManagement from "@/pages/Dashboard/Admin/AllProductsManagement";
+import AllOrdersManagement from "@/pages/Dashboard/Admin/AllOrdersManagement";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +31,24 @@ export const router = createBrowserRouter([
       {
         path: "register",
         Component: Register,
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    Component: DashboardLayout,
+    children: [
+      {
+        path: "users-management",
+        Component: UsersManagement,
+      },
+      {
+        path: "all-products-management",
+        Component: AllProductsManagement,
+      },
+      {
+        path: "all-orders-management",
+        Component: AllOrdersManagement,
       },
     ],
   },
