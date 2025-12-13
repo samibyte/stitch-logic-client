@@ -13,6 +13,10 @@ import PrivateRouter from "./PrivateRouter";
 import ManagerRouter from "./ManagerRouter";
 import AddProduct from "@/pages/Dashboard/Manager/AddProduct";
 import ManageProducts from "@/pages/Dashboard/Manager/ManageProducts";
+import PendingOrders from "@/pages/Dashboard/Manager/PendingOrders";
+import AllProducts from "@/pages/AllProducts/AllProducts";
+import ProductDetails from "@/pages/ProductDetails/ProductDetails";
+import OrderSuccess from "@/pages/OrderSuccess/OrderSuccess";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +26,26 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path: "/all-products",
+        Component: AllProducts,
+      },
+      {
+        path: "/products/:id",
+        element: (
+          <PrivateRouter>
+            <ProductDetails />
+          </PrivateRouter>
+        ),
+      },
+      {
+        path: "/orders/success",
+        element: (
+          <PrivateRouter>
+            <OrderSuccess />
+          </PrivateRouter>
+        ),
       },
     ],
   },
@@ -84,6 +108,14 @@ export const router = createBrowserRouter([
         element: (
           <ManagerRouter>
             <ManageProducts />
+          </ManagerRouter>
+        ),
+      },
+      {
+        path: "pending-orders",
+        element: (
+          <ManagerRouter>
+            <PendingOrders />
           </ManagerRouter>
         ),
       },
