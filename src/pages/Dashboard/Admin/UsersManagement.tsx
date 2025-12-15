@@ -1,4 +1,4 @@
-import ManageUsersTable from "@/components/admin/ManageUsersTable";
+import ManageUsersTable from "@/components/admin/ManageUsers/ManageUsersTable";
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 const UsersManagement = () => {
   return (
-    <div className="container mx-auto py-6">
+    <div>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Manage Users</CardTitle>
