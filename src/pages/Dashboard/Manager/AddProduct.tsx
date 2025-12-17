@@ -115,7 +115,7 @@ const AddProduct = () => {
   const watchPaymentOptions = getValues("paymentOptions");
 
   // Categories based on requirements
-  const categories = ["Shirt", "Pant", "Jacket", "Accessories", "Other"];
+  const categories = ["men", "women", "kids", "accessories", "footwear"];
 
   // Validate MOQ vs Available Quantity
   useEffect(() => {
@@ -148,7 +148,7 @@ const AddProduct = () => {
   const onSubmit: SubmitHandler<ProductFormData> = (data) => {
     const productToSubmit = {
       ...data,
-      firebaseUid: user?.uid,
+      manager: { firebaseUid: user?.uid, name: user?.displayName },
     };
 
     addProductMutation.mutate(productToSubmit);
@@ -520,7 +520,6 @@ const AddProduct = () => {
                                   "https://via.placeholder.com/150?text=Invalid+URL";
                               }}
                             />
-                            <div className="bg-opacity-0 group-hover:bg-opacity-20 absolute inset-0 bg-black transition-opacity" />
                             <div className="absolute top-2 right-2">
                               <Badge variant="secondary" className="text-xs">
                                 {index + 1}

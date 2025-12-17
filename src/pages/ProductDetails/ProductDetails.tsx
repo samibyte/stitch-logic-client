@@ -21,26 +21,6 @@ import useGetRole from "@/hooks/useGetRole";
 import OrderModal from "@/components/Modals/OrderModal";
 import { toast } from "sonner";
 
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  images: string[];
-  demoVideo: string;
-  availableQuantity: number;
-  minOrderQuantity: number;
-  paymentOptions: string[];
-  showOnHome: boolean;
-  createdAt: string;
-  manager: {
-    _id: string;
-    name: string;
-    email: string;
-  };
-}
-
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
