@@ -19,6 +19,13 @@ import { toast } from "sonner";
 import axios from "axios";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import SocialLogin from "./SocialLogin";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 export const title = "Signup Form";
 
 const formSchema = z.object({
@@ -29,6 +36,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
+  role: z.enum(["buyer", "manager"]),
   password: z
     .string()
     .min(6, {
@@ -48,6 +56,7 @@ const Register = () => {
     defaultValues: {
       fullName: "",
       email: "",
+      role: "buyer",
       password: "",
       terms: false,
     },
@@ -60,7 +69,7 @@ const Register = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const { email, password, fullName, photo } = values;
+      const { email, password, fullName, photo, role } = values;
 
       let photoURL = null;
 
@@ -83,6 +92,7 @@ const Register = () => {
         firebaseUid: response.user.uid,
         displayName: fullName,
         email,
+        role,
         photoURL: photoURL,
       };
       const res = await axiosSecure.post("/users", userInfo);
@@ -164,6 +174,30 @@ const Register = () => {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Role</FormLabel>
+
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="buyer">Buyer</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
