@@ -112,8 +112,6 @@ const OrderModal = ({
     mutationFn: async (orderData: BookingFormData) => {
       const res = await axiosSecure.post("/orders", {
         buyer: {
-          firebaseUid: user?.uid,
-          email: orderData.email,
           firstName: orderData.firstName,
           lastName: orderData.lastName,
           contactNumber: orderData.contactNumber,
@@ -121,11 +119,9 @@ const OrderModal = ({
           notes: orderData.notes || "",
         },
         // Product reference
-        product: orderData.productId,
+        productId: orderData.productId,
         paymentOption: orderData.paymentOption,
         quantity: orderData.quantity,
-        orderPrice: orderData.orderPrice,
-        requiresOnlinePayment: orderData.paymentOption === "PayFirst",
       });
       return res.data;
     },
