@@ -119,6 +119,7 @@ interface DataTableProps<T> {
 
   // Loading Skeletons
   skeletonCount?: number;
+  getRowActions?: (row: T) => Action<T>[];
 }
 
 export function DataTable<T>({
@@ -140,6 +141,7 @@ export function DataTable<T>({
   showClearFilters = false,
   onClearFilters,
   skeletonCount = 5,
+  getRowActions,
 }: DataTableProps<T>) {
   const renderCell = (row: T, column: ColumnDef<T>) => {
     if (column.cell) {
@@ -150,6 +152,9 @@ export function DataTable<T>({
     return value as ReactNode;
   };
 
+  // Calculate if any rows have actions (to show/hide actions column)
+  const hasAnyActions = actions.length > 0 || getRowActions !== undefined;
+
   // Generate skeleton rows
   const skeletonRows = Array.from({ length: skeletonCount }).map((_, index) => (
     <TableRow key={`skeleton-${index}`}>
@@ -158,7 +163,7 @@ export function DataTable<T>({
           <div className="h-6 animate-pulse rounded bg-gray-200"></div>
         </TableCell>
       ))}
-      {actions.length > 0 && (
+      {hasAnyActions && (
         <TableCell>
           <div className="flex justify-end">
             <div className="h-8 w-8 animate-pulse rounded bg-gray-200"></div>
@@ -271,8 +276,8 @@ export function DataTable<T>({
                   {column.header}
                 </TableHead>
               ))}
-              {actions.length > 0 && (
-                <TableHead className="text-right">Actions</TableHead>
+              {hasAnyActions && (
+                <TableHead className="w-[100px] text-right">Actions</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -282,7 +287,7 @@ export function DataTable<T>({
             ) : data.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length + (actions.length > 0 ? 1 : 0)}
+                  colSpan={columns.length + (hasAnyActions ? 1 : 0)}
                   className="py-12 text-center text-gray-500"
                 >
                   <div className="flex flex-col items-center justify-center gap-2">
@@ -299,62 +304,74 @@ export function DataTable<T>({
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((row, index) => (
-                <TableRow
-                  key={index}
-                  className={
-                    onRowClick ? "cursor-pointer hover:bg-gray-50" : ""
-                  }
-                  onClick={() => onRowClick && onRowClick(row)}
-                >
-                  {columns.map((column) => (
-                    <TableCell
-                      key={String(column.accessorKey)}
-                      className={column.className}
-                    >
-                      {renderCell(row, column)}
-                    </TableCell>
-                  ))}
+              data.map((row, index) => {
+                // Get actions for this specific row
+                const rowActions = getRowActions ? getRowActions(row) : actions;
 
-                  {actions.length > 0 && (
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          asChild
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          {actions.map((action, actionIndex) => (
-                            <DropdownMenuItem
-                              key={actionIndex}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                action.onClick(row);
-                              }}
-                              className={
-                                action.variant === "destructive"
-                                  ? "text-red-600 focus:text-red-600"
-                                  : ""
-                              }
-                              disabled={action.disabled?.(row)}
+                const hasRowActions = rowActions.length > 0;
+
+                return (
+                  <TableRow
+                    key={index}
+                    className={
+                      onRowClick ? "cursor-pointer hover:bg-gray-50" : ""
+                    }
+                    onClick={() => onRowClick && onRowClick(row)}
+                  >
+                    {columns.map((column) => (
+                      <TableCell
+                        key={String(column.accessorKey)}
+                        className={column.className}
+                      >
+                        {renderCell(row, column)}
+                      </TableCell>
+                    ))}
+
+                    {hasAnyActions && (
+                      <TableCell className="text-right">
+                        {hasRowActions ? (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger
+                              asChild
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <div className="flex items-center gap-2">
-                                {action.icon}
-                                {action.label}
-                              </div>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              {rowActions.map((action, actionIndex) => (
+                                <DropdownMenuItem
+                                  key={actionIndex}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    action.onClick(row);
+                                  }}
+                                  className={
+                                    action.variant === "destructive"
+                                      ? "text-red-600 focus:text-red-600"
+                                      : ""
+                                  }
+                                  disabled={action.disabled?.(row)}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    {action.icon}
+                                    {action.label}
+                                  </div>
+                                </DropdownMenuItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        ) : (
+                          // Empty cell to maintain table layout
+                          <div className="h-8 w-8"></div>
+                        )}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -363,7 +380,7 @@ export function DataTable<T>({
         {pagination && pagination.totalPages > 1 && (
           <div className="flex items-center justify-between border-t px-4 py-4">
             <div className="text-sm text-gray-600">
-              Page {pagination?.currentPage} of {pagination?.totalPages}
+              Page {pagination.currentPage} of {pagination.totalPages}
             </div>
 
             <Pagination>
@@ -372,10 +389,10 @@ export function DataTable<T>({
                   <PaginationPrevious
                     onClick={(e) => {
                       e.preventDefault();
-                      pagination?.onPrevPage();
+                      pagination.onPrevPage();
                     }}
                     className={
-                      pagination?.currentPage === 1
+                      pagination.currentPage === 1
                         ? "pointer-events-none opacity-50"
                         : "cursor-pointer"
                     }
@@ -385,7 +402,7 @@ export function DataTable<T>({
                 {/* Simple page indicator */}
                 <PaginationItem>
                   <span className="px-4 text-sm">
-                    {pagination?.currentPage} / {pagination?.totalPages}
+                    {pagination.currentPage} / {pagination.totalPages}
                   </span>
                 </PaginationItem>
 
@@ -393,10 +410,10 @@ export function DataTable<T>({
                   <PaginationNext
                     onClick={(e) => {
                       e.preventDefault();
-                      pagination?.onNextPage();
+                      pagination.onNextPage();
                     }}
                     className={
-                      pagination?.currentPage === pagination?.totalPages
+                      pagination.currentPage === pagination.totalPages
                         ? "pointer-events-none opacity-50"
                         : "cursor-pointer"
                     }
