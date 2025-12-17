@@ -12,7 +12,7 @@ import AdminRouter from "./AdminRouter";
 import PrivateRouter from "./PrivateRouter";
 import ManagerRouter from "./ManagerRouter";
 import AddProduct from "@/pages/Dashboard/Manager/AddProduct";
-import ManageProducts from "@/pages/Dashboard/Manager/ManageProducts";
+import ManageProductsTable from "@/pages/Dashboard/Manager/ManageProducts";
 import PendingOrders from "@/pages/Dashboard/Manager/PendingOrders";
 import AllProducts from "@/pages/AllProducts/AllProducts";
 import ProductDetails from "@/pages/ProductDetails/ProductDetails";
@@ -107,7 +107,7 @@ export const router = createBrowserRouter([
         path: "manage-products",
         element: (
           <ManagerRouter>
-            <ManageProducts />
+            <ManageProductsTable />
           </ManagerRouter>
         ),
       },
