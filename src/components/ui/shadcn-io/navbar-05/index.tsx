@@ -144,7 +144,14 @@ const UserMenu = ({
           className="hover:bg-accent hover:text-accent-foreground h-9 px-2 py-0"
         >
           <Avatar className="h-7 w-7">
-            <AvatarImage src={userAvatar} alt={userName} />
+            <AvatarImage
+              src={userAvatar}
+              alt={userName}
+              onError={(e) => {
+                e.currentTarget.src = "/avatar-01.png";
+              }}
+              loading="lazy"
+            />
             <AvatarFallback className="text-xs">
               {userName
                 .split(" ")
