@@ -1,4 +1,4 @@
-import ManageUsersTable from "@/components/admin/ManageUsers/ManageUsersTable";
+import ManageUsersTable from "@/components/Admin/ManageUsers/ManageUsersTable";
 import {
   Card,
   CardContent,

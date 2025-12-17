@@ -119,7 +119,6 @@ const ManageUsersTable = () => {
       const res = await axiosSecure.get(`/users?${params.toString()}`);
       return res.data;
     },
-    // Use placeholderData instead of keepPreviousData
     placeholderData: (previousData) => previousData,
   });
 
