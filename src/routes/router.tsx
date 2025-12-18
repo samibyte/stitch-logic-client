@@ -19,6 +19,7 @@ import ProductDetails from "@/pages/ProductDetails/ProductDetails";
 import OrderSuccess from "@/pages/OrderSuccess/OrderSuccess";
 import ApprovedOrders from "@/pages/Dashboard/Manager/ApprovedOrders";
 import TrackOrder from "@/pages/TrackOrder/TrackOrder";
+import MyProfile from "@/pages/Dashboard/MyProfile/MyProfile";
 
 export const router = createBrowserRouter([
   {
@@ -128,6 +129,10 @@ export const router = createBrowserRouter([
             <ApprovedOrders />
           </ManagerRouter>
         ),
+      },
+      {
+        path: "profile",
+        element: <MyProfile />,
       },
       {
         path: "track-order/:orderId",

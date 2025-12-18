@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "My Profile",
-        url: "/dashboard/my-profile",
+        url: "/dashboard/profile",
         icon: User,
       },
     ],
@@ -107,7 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "My Profile",
-        url: "/dashboard/my-profile",
+        url: "/dashboard/profile",
         icon: ShoppingCart,
       },
     ],
