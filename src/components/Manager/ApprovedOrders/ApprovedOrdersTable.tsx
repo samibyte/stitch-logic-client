@@ -412,16 +412,6 @@ const ApprovedOrdersTable = () => {
       },
     ];
 
-    if (order.trackingUpdates && order.trackingUpdates.length > 0) {
-      actions.push({
-        label: "View Tracking",
-        icon: <MapPin className="mr-2 h-4 w-4" />,
-        onClick: () => {
-          setSelectedOrder(order);
-        },
-      });
-    }
-
     actions.push({
       label: "Add Tracking",
       icon: <Truck className="mr-2 h-4 w-4" />,
