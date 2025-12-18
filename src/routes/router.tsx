@@ -20,6 +20,7 @@ import OrderSuccess from "@/pages/OrderSuccess/OrderSuccess";
 import ApprovedOrders from "@/pages/Dashboard/Manager/ApprovedOrders";
 import TrackOrder from "@/pages/TrackOrder/TrackOrder";
 import MyProfile from "@/pages/Dashboard/MyProfile/MyProfile";
+import MyOrders from "@/pages/Dashboard/MyOrders/MyOrders";
 
 export const router = createBrowserRouter([
   {
@@ -137,6 +138,10 @@ export const router = createBrowserRouter([
       {
         path: "track-order/:orderId",
         element: <TrackOrder />,
+      },
+      {
+        path: "my-orders",
+        element: <MyOrders />,
       },
     ],
   },
