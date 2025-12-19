@@ -64,7 +64,7 @@ const Login = () => {
         <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <h1 className="text-4xl font-extrabold">Welcome back</h1>
-            <p className="text-foreground">Login with MoveXpress</p>
+            <p className="text-foreground">Login to StitchLogic</p>
           </div>
           <FormField
             control={form.control}
