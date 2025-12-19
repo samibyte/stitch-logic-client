@@ -8,7 +8,7 @@ const RootLayout = () => {
       <header>
         <Navbar />
       </header>
-      <main className="container mx-auto py-6">
+      <main className="container mx-auto min-h-screen py-6">
         <Outlet />
       </main>
       <Footer />

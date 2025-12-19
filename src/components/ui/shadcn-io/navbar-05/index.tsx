@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Link, NavLink } from "react-router";
 import useAuth from "@/hooks/useAuth";
+import stitchLogo from "/stitchLogo.png";
 
 // Hamburger icon component
 const HamburgerIcon = ({
@@ -296,7 +297,10 @@ export const Navbar05 = React.forwardRef<
             className="text-primary hover:text-primary/90 flex cursor-pointer items-center space-x-2 transition-colors"
           >
             <span className="hidden text-xl font-bold sm:inline-block">
-              shadcn.io
+              <div className="flex items-center">
+                <img className="w-26" src={stitchLogo}></img>
+                <p className="text-3xl font-black text-[#090909]/90">Logic</p>
+              </div>
             </span>
           </NavLink>
         </div>
