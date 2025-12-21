@@ -251,7 +251,11 @@ const AllProducts = () => {
           className={`grid grid-cols-1 gap-6 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${isPlaceholderData ? "opacity-50" : "opacity-100"}`}
         >
           {productsData?.products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard
+              key={product._id}
+              product={product}
+              categories={categories}
+            />
           ))}
         </div>
       )}
