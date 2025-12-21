@@ -101,11 +101,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: ShoppingCart,
       },
       {
-        title: "Track Order",
-        url: "/dashboard/track-orders",
-        icon: ShoppingCart,
-      },
-      {
         title: "My Profile",
         url: "/dashboard/profile",
         icon: ShoppingCart,

@@ -21,7 +21,7 @@ import EditProductModal from "../../Modals/EditProductModal";
 import AddProductModal from "./AddProductModal";
 import { Badge } from "@/components/ui/badge";
 
-export type PaymentOptions = "COD" | "PayFirst" | "Both";
+export type PaymentOptions = "COD" | "PayFirst";
 export type Category = "men" | "women" | "kids" | "accessories" | "footwear";
 
 export interface Product {
