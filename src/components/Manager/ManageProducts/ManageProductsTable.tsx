@@ -8,7 +8,7 @@ import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import EditProductModal from "../../Modals/EditProductModal";
 
-export type PaymentOptions = "COD" | "PayFirst" | "Both";
+export type PaymentOptions = "COD" | "PayFirst";
 export type Category = "men" | "women" | "kids" | "accessories" | "footwear";
 
 export interface Product {
