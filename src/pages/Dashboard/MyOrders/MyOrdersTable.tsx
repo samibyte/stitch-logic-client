@@ -358,7 +358,7 @@ const MyOrdersTable = () => {
       {
         label: "View Details",
         icon: <Eye className="mr-2 h-4 w-4" />,
-        onClick: () => navigate(`/dashboard/orders/${order._id}`),
+        onClick: () => navigate(`/dashboard/track-order/${order._id}`),
         variant: "outline" as const,
       },
     ];
