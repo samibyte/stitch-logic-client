@@ -11,6 +11,7 @@ import type { User, UserStatus } from "./ManageUsersTable";
 interface EditUserModalProps {
   user: User | null;
   onUpdateStatus: (status: UserStatus) => void;
+  onSuspendClick: () => void;
   isEditDialogOpen: boolean;
   setIsEditDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -23,10 +24,19 @@ type StatusAction = {
 const EditUserModal = ({
   user,
   onUpdateStatus,
+  onSuspendClick,
   isEditDialogOpen,
   setIsEditDialogOpen,
 }: EditUserModalProps) => {
   if (!user) return null;
+
+  const handleAction = (nextStatus: UserStatus) => {
+    if (nextStatus === "suspended") {
+      onSuspendClick();
+    } else {
+      onUpdateStatus(nextStatus);
+    }
+  };
 
   const statusActions: Record<UserStatus, StatusAction[]> = {
     pending: [
@@ -70,13 +80,17 @@ const EditUserModal = ({
           </div>
         </div>
 
-        <div className="space-x-2">
+        <div className="mt-4 flex justify-end space-x-2">
           {statusActions[user.status].map(({ label, next }) => (
-            <Button key={next} onClick={() => onUpdateStatus(next)}>
+            <Button
+              key={next}
+              variant={next === "suspended" ? "destructive" : "default"}
+              onClick={() => handleAction(next)}
+            >
               {label}
             </Button>
           ))}
-        </div>
+        </div>  
       </DialogContent>
     </Dialog>
   );

@@ -31,6 +31,7 @@ import useAuth from "@/hooks/useAuth";
 import useGetRole from "@/hooks/useGetRole";
 import OrderModal from "@/components/Modals/OrderModal";
 import DetailsSkeleton from "./DetailsSkeleton";
+import useUser from "@/hooks/useUser";
 
 // Define strict type for payment
 type PaymentMethod = "COD" | "PayFirst";
@@ -67,12 +68,9 @@ const ProductDetails = () => {
     enabled: !!id,
   });
 
-  // --- FIXED LOGIC HERE ---
-  // Only run this when the PRODUCT data changes, not when the user selects an option.
   useEffect(() => {
     if (!product) return;
 
-    // Set initial payment method based on availability
     const hasCOD = product.paymentOptions?.includes("COD");
     const defaultPayment = hasCOD ? "COD" : "PayFirst";
 
@@ -107,6 +105,8 @@ const ProductDetails = () => {
       : url;
   };
 
+  const { dbUser } = useUser();
+  const isSuspended = dbUser?.status === "suspended";
   const canPlaceOrder = user && !["admin", "manager"].includes(role);
   const isOutOfStock = product?.availableQuantity === 0;
 
@@ -371,7 +371,7 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {/* Simplified Payment Options */}
+              {/*Payment Options */}
               <div className="space-y-3">
                 <label className="text-sm font-medium">Payment Method</label>
                 <div className="grid grid-cols-2 gap-3">
@@ -436,17 +436,19 @@ const ProductDetails = () => {
             </CardContent>
 
             <CardFooter className="flex-col gap-3 pt-2">
-              {!canPlaceOrder ? (
+              {!canPlaceOrder || isSuspended ? (
                 <div className="w-full rounded-md border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-800">
-                  {user
-                    ? "Admin/Managers cannot place orders."
-                    : "Please sign in to purchase."}
+                  {isSuspended
+                    ? "Suspended users cannot place orders."
+                    : !canPlaceOrder
+                      ? "Admin/Managers cannot place orders."
+                      : "Please sign in to purchase."}
                 </div>
               ) : (
                 <Button
                   size="lg"
                   className="w-full text-lg shadow-md transition-all hover:shadow-lg"
-                  disabled={isOutOfStock}
+                  disabled={isOutOfStock || isSuspended}
                   onClick={() => setShowBookingDialog(true)}
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />

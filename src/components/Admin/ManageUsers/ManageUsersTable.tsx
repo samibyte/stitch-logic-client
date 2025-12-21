@@ -16,6 +16,7 @@ import { AvatarCell } from "../../DataTable/AvatarCell";
 import { StatusBadge } from "../../DataTable/StatusBadge";
 import AddUserModal from "./AddUserModal";
 import EditUserModal from "./EditUserModal";
+import SuspendUserModal from "./SuspendUserModal";
 
 export type UserRole = "admin" | "manager" | "buyer";
 export type UserStatus = "suspended" | "active" | "pending";
@@ -49,10 +50,11 @@ const ManageUsersTable = () => {
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
-  const [limit] = useState(10); // Items per page
+  const [limit] = useState(10);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false);
 
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
@@ -124,26 +126,34 @@ const ManageUsersTable = () => {
 
   const { users, pagination } = usersData;
 
-  // Update mutations
   const updateUserMutation = useMutation({
     mutationFn: async ({
       userId,
       status,
+      reason,
+      feedback,
     }: {
       userId: string;
       status: UserStatus;
+      reason?: string;
+      feedback?: string;
     }) => {
       const res = await axiosSecure.patch(`/users/${userId}`, {
         status: status,
+        suspendReason: reason,
+        suspendFeedback: feedback,
       });
       return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("User status updated successfully");
+      setIsSuspendDialogOpen(false);
     },
-    onError: () => {
-      toast.error("Failed to update user status");
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message || "Failed to update user status",
+      );
     },
   });
 
@@ -394,6 +404,11 @@ const ManageUsersTable = () => {
     setIsEditDialogOpen(true);
   };
 
+  const handleOpenSuspendFromEdit = () => {
+    setIsEditDialogOpen(false);
+    setIsSuspendDialogOpen(true);
+  };
+
   // Pagination handlers
   const handleNextPage = () => {
     if (pagination.hasNextPage) {
@@ -462,8 +477,28 @@ const ManageUsersTable = () => {
       <EditUserModal
         user={selectedUser}
         onUpdateStatus={handleStatusUpdate}
+        onSuspendClick={handleOpenSuspendFromEdit}
         isEditDialogOpen={isEditDialogOpen}
         setIsEditDialogOpen={setIsEditDialogOpen}
+      />
+      <SuspendUserModal
+        user={selectedUser}
+        isOpen={isSuspendDialogOpen}
+        onClose={() => {
+          setIsSuspendDialogOpen(false);
+          setSelectedUser(null);
+        }}
+        isLoading={updateUserMutation.isPending}
+        onConfirm={(data) => {
+          if (selectedUser) {
+            updateUserMutation.mutate({
+              userId: selectedUser._id,
+              status: "suspended",
+              reason: data.reason,
+              feedback: data.feedback,
+            });
+          }
+        }}
       />
     </div>
   );
