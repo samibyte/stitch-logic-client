@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
+import useUser from "@/hooks/useUser";
 
 export type OrderStatus = "pending" | "approved" | "rejected" | "cancelled";
 export type PaymentStatus = "pending" | "paid";
@@ -330,8 +331,16 @@ const PendingOrdersTable = () => {
     ];
   };
 
+  const { dbUser } = useUser();
   // Handlers
   const handleApproveOrder = async (orderId: string) => {
+    if (dbUser?.status === "suspended") {
+      return toast.error("Access Denied", {
+        description:
+          "Your account is suspended. You cannot approve new orders.",
+      });
+    }
+
     const result = await Swal.fire({
       title: "Approve Order?",
       text: "This will approve the order and notify the buyer.",
@@ -350,6 +359,12 @@ const PendingOrdersTable = () => {
   };
 
   const handleRejectOrder = async (orderId: string) => {
+    if (dbUser?.status === "suspended") {
+      return toast.error("Access Denied", {
+        description: "Your account is suspended. You cannot reject new orders.",
+      });
+    }
+
     const result = await Swal.fire({
       title: "Reject Order?",
       text: "This will reject the order and notify the buyer.",

@@ -37,8 +37,8 @@ import {
 import { toast } from "sonner";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useMutation } from "@tanstack/react-query";
-import useAuth from "@/hooks/useAuth";
 import axios from "axios";
+import useUser from "@/hooks/useUser";
 
 // Zod schema for form validation
 const productSchema = z.object({
@@ -78,7 +78,6 @@ type ProductFormData = z.infer<typeof productSchema>;
 const AddProduct = () => {
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
-  const { user } = useAuth();
 
   const [newImageUrl, setNewImageUrl] = useState("");
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
@@ -113,7 +112,24 @@ const AddProduct = () => {
   const watchMinOrderQuantity = getValues("minOrderQuantity");
   const watchImages = getValues("images");
   const watchPaymentOptions = getValues("paymentOptions");
+  const { dbUser } = useUser();
+  console.log(dbUser);
 
+  useEffect(() => {
+    if (dbUser?.status === "suspended") {
+      toast.error("Access Denied", {
+        description: "Your account is suspended. You cannot add new products.",
+      });
+      navigate("/dashboard");
+    }
+  }, [dbUser, navigate]);
+
+  // ... (Your useEffect for validation remains the same)
+  useEffect(() => {
+    if (watchMinOrderQuantity > watchAvailableQuantity) {
+      trigger("minOrderQuantity");
+    }
+  }, [watchAvailableQuantity, watchMinOrderQuantity, trigger]);
   // Categories based on requirements
   const categories = ["men", "women", "kids", "accessories", "footwear"];
 
@@ -146,10 +162,7 @@ const AddProduct = () => {
   });
 
   const onSubmit: SubmitHandler<ProductFormData> = (data) => {
-    const productToSubmit = {
-      ...data,
-      manager: { firebaseUid: user?.uid, name: user?.displayName },
-    };
+    const productToSubmit = data;
 
     addProductMutation.mutate(productToSubmit);
   };
