@@ -17,6 +17,7 @@ import {
   ShoppingBag,
   Settings,
   AlertCircle,
+  Ban,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -58,6 +59,8 @@ interface UserProfile {
   role: "buyer" | "manager" | "admin";
   status: "pending" | "active" | "suspended";
   createdAt: string;
+  suspendReason?: string;
+  suspendFeedback?: string;
 }
 
 // Validation schema for profile update
@@ -249,6 +252,14 @@ const MyProfile = () => {
       </div>
     );
   }
+
+  const formatSuspensionReason = (reason: string) => {
+    if (!reason) return "Reason not specified";
+    return reason
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -617,18 +628,76 @@ const MyProfile = () => {
 
             {/* Status Alert */}
             {user.status !== "active" && (
-              <Card className="border-amber-200 bg-amber-50">
-                <CardHeader>
-                  <CardTitle className="text-amber-800">
-                    Account Status
+              <Card
+                className={`border-l-4 ${
+                  user.status === "suspended"
+                    ? "border-red-500 bg-red-50"
+                    : "border-yellow-500 bg-yellow-50"
+                }`}
+              >
+                <CardHeader className="pb-3">
+                  <CardTitle
+                    className={`flex items-center gap-2 text-lg ${
+                      user.status === "suspended"
+                        ? "text-red-700"
+                        : "text-yellow-700"
+                    }`}
+                  >
+                    {user.status === "suspended" ? (
+                      <>
+                        <Ban className="h-5 w-5" /> Account Suspended
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="h-5 w-5" /> Account Pending
+                      </>
+                    )}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-amber-700">
-                    {user.status === "pending"
-                      ? "Your account is pending approval. Some features may be limited."
-                      : "Your account is suspended. Please contact support."}
-                  </p>
+                <CardContent className="space-y-4">
+                  {user.status === "pending" ? (
+                    <p className="text-sm text-yellow-800">
+                      Your account is currently under review. While pending,
+                      access to certain features (like placing orders) is
+                      restricted.
+                    </p>
+                  ) : (
+                    /* SUSPENDED UI */
+                    <div className="space-y-3">
+                      <div className="rounded-md bg-white/60 p-3">
+                        <p className="text-xs font-bold tracking-wider text-red-600 uppercase">
+                          Reason for Suspension
+                        </p>
+                        <p className="font-medium text-red-900">
+                          {formatSuspensionReason(user.suspendReason || "")}
+                        </p>
+                      </div>
+
+                      {user.suspendFeedback && (
+                        <div className="rounded-md bg-white/60 p-3">
+                          <p className="text-xs font-bold tracking-wider text-red-600 uppercase">
+                            Admin Feedback
+                          </p>
+                          <p className="mt-1 text-sm leading-relaxed text-red-900">
+                            "{user.suspendFeedback}"
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="pt-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="w-full bg-red-600 hover:bg-red-700"
+                          asChild
+                        >
+                          <a href="mailto:support@example.com?subject=Account Suspension Appeal">
+                            Contact Support to Appeal
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
