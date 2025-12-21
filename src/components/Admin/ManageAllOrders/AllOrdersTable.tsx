@@ -197,11 +197,11 @@ const AllOrdersTable = () => {
       header: "Product",
       cell: (row) => (
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md border">
-            {row?.product.images && row?.product.images.length > 0 ? (
+          <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border">
+            {row?.product?.images && row?.product?.images.length > 0 ? (
               <img
-                src={row?.product.images[0]}
-                alt={row?.product.name}
+                src={row?.product?.images[0]}
+                alt={row?.product?.name}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   e.currentTarget.src = "/avatar-01.png";
@@ -215,12 +215,12 @@ const AllOrdersTable = () => {
             )}
           </div>
           <div>
-            <p className="font-medium">{row?.product.name}</p>
+            <p className="font-medium">{row?.product?.name}</p>
             <p className="text-xs text-gray-500 capitalize">
-              {row?.product.category}
+              {row?.product?.category}
             </p>
             <p className="text-xs text-gray-500">
-              ${row?.product.price.toFixed(2)} each
+              ${row?.product?.price.toFixed(2)} each
             </p>
           </div>
         </div>
