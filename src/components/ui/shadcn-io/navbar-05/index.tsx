@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { Link, NavLink } from "react-router";
 import useAuth from "@/hooks/useAuth";
 import stitchLogo from "/stitchLogo.png";
+import { ThemeToggle } from "../../ThemeToggle";
 
 // Hamburger icon component
 const HamburgerIcon = ({
@@ -333,6 +334,7 @@ export const Navbar05 = React.forwardRef<
           {user ? (
             <>
               <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <InfoMenu />
                 <NotificationMenu notificationCount={notificationCount} />
               </div>
