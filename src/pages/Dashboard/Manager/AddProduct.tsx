@@ -113,7 +113,6 @@ const AddProduct = () => {
   const watchImages = getValues("images");
   const watchPaymentOptions = getValues("paymentOptions");
   const { dbUser } = useUser();
-  console.log(dbUser);
 
   useEffect(() => {
     if (dbUser?.status === "suspended") {
