@@ -135,7 +135,7 @@ const OrderModal = ({
       if (data.requiresOnlinePayment) {
         navigate(`/payment/${data._id}`);
       } else {
-        navigate("/orders/success");
+        toast.success("Order successfully sent to manager");
       }
 
       onOpenChange(false);

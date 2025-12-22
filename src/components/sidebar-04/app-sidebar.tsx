@@ -130,7 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <div className="flex">
       <Sidebar
         style={{ "--sidebar-width": "12rem" } as React.CSSProperties}
-        collapsible="none"
+        collapsible="offcanvas"
         className="border-r p-2 px-1"
         {...props}
       >
@@ -161,7 +161,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <Button variant="ghost" className="w-full justify-start">
                       <NavLink
                         to={item.url}
-                        className="flex w-full items-center gap-2"
+                        className={({ isActive }) =>
+                          `flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors ${
+                            isActive
+                              ? "bg-primary text-primary-foreground"
+                              : "hover:bg-accent hover:text-accent-foreground"
+                          }`
+                        }
                       >
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>

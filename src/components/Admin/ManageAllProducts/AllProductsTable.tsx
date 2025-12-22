@@ -536,12 +536,8 @@ const AllProductsTable = () => {
 
       {/* Add Product Modal */}
       <AddProductModal
-        isOpen={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
-        onSuccess={() => {
-          setIsAddDialogOpen(false);
-          queryClient.invalidateQueries({ queryKey: ["products"] });
-        }}
+        isAddDialogOpen={isAddDialogOpen}
+        setIsAddDialogOpen={setIsAddDialogOpen}
       />
     </div>
   );

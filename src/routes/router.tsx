@@ -16,7 +16,6 @@ import ManageProductsTable from "@/pages/Dashboard/Manager/ManageProducts";
 import PendingOrders from "@/pages/Dashboard/Manager/PendingOrders";
 import AllProducts from "@/pages/AllProducts/AllProducts";
 import ProductDetails from "@/pages/ProductDetails/ProductDetails";
-import OrderSuccess from "@/pages/OrderSuccess/OrderSuccess";
 import ApprovedOrders from "@/pages/Dashboard/Manager/ApprovedOrders";
 import TrackOrder from "@/pages/TrackOrder/TrackOrder";
 import MyProfile from "@/pages/Dashboard/MyProfile/MyProfile";
@@ -40,14 +39,6 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRouter>
             <ProductDetails />
-          </PrivateRouter>
-        ),
-      },
-      {
-        path: "/orders/success",
-        element: (
-          <PrivateRouter>
-            <OrderSuccess />
           </PrivateRouter>
         ),
       },
