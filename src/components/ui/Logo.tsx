@@ -1,11 +1,36 @@
-import stitchLogo from "/stitchLogo.png";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import logoLight from "/stitch-logo-light.png";
+import logoDark from "/stitch-logo-dark.png";
+
 const Logo = () => {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="h-10 w-40" />;
+  }
+
+  const currentLogo = resolvedTheme === "dark" ? logoDark : logoLight;
+
   return (
-    <div className={`relative h-30 w-60 border-2`}>
-      <img className="w-40 border-2" src={stitchLogo}></img>
-      <p className="absolute right-0 text-5xl font-black text-[#090909]/90">
+    <div className="group relative flex h-12 w-auto cursor-pointer items-center">
+      <img
+        className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+        src={currentLogo}
+        alt="Stitch Logic Logo"
+      />
+
+      <p className="text-foreground ml-2 text-4xl font-black tracking-tighter">
         Logic
       </p>
+
+      {/* Modern Accent Dot */}
+      <span className="bg-chart-1 mb-2 ml-1 h-2 w-2 animate-pulse self-end rounded-full" />
     </div>
   );
 };
