@@ -22,6 +22,7 @@ import MyProfile from "@/pages/Dashboard/MyProfile/MyProfile";
 import MyOrders from "@/pages/Dashboard/MyOrders/MyOrders";
 import AboutPage from "@/pages/AboutPage/AboutPage";
 import Contact from "@/pages/Contact/Contact";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
@@ -145,5 +146,9 @@ export const router = createBrowserRouter([
         element: <MyOrders />,
       },
     ],
+  },
+  {
+    path: "*",
+    Component: NotFoundPage,
   },
 ]);
