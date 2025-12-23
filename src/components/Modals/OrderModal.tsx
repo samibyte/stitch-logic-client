@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
 import {
   Dialog,
   DialogContent,
@@ -69,7 +68,6 @@ const OrderModal = ({
   initialQuantity = 1,
   initialPaymentOption = "COD",
 }: OrderModalProps) => {
-  const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
@@ -126,20 +124,20 @@ const OrderModal = ({
       return res.data;
     },
     onSuccess: (data) => {
-      toast.success("Order placed successfully!");
-
-      // Store tracking ID for success page
       localStorage.setItem("lastOrderTrackingId", data.trackingId);
 
-      // Redirect to payment page if PayFirst
-      if (data.requiresOnlinePayment) {
-        navigate(`/payment/${data._id}`);
+      if (data.paymentOption === "PayFirst" && data.checkoutUrl) {
+        toast.info("Redirecting to secure payment...");
+        window.location.href = data.checkoutUrl;
       } else {
-        toast.success("Order successfully sent to manager");
-      }
+        toast.success(`Order Placed! ID: ${data.trackingId}`, {
+          description: "You can track your order status in your profile.",
+          duration: 5000,
+        });
 
-      onOpenChange(false);
-      reset();
+        onOpenChange(false);
+        reset();
+      }
     },
     onError: (error: unknown) => {
       if (axios.isAxiosError(error)) {

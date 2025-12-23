@@ -33,7 +33,6 @@ import OrderModal from "@/components/Modals/OrderModal";
 import DetailsSkeleton from "./DetailsSkeleton";
 import useUser from "@/hooks/useUser";
 
-// Define strict type for payment
 type PaymentMethod = "COD" | "PayFirst";
 
 const ProductDetails = () => {
@@ -43,14 +42,12 @@ const ProductDetails = () => {
   const { user } = useAuth();
   const { role } = useGetRole();
 
-  // State
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showBookingDialog, setShowBookingDialog] = useState(false);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [selectedPaymentOption, setSelectedPaymentOption] =
     useState<PaymentMethod>("COD");
 
-  // Scroll to top on load
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
@@ -70,10 +67,8 @@ const ProductDetails = () => {
 
   useEffect(() => {
     if (!product) return;
-
     const hasCOD = product.paymentOptions?.includes("COD");
     const defaultPayment = hasCOD ? "COD" : "PayFirst";
-
     setSelectedPaymentOption(defaultPayment);
     setSelectedQuantity(product.minOrderQuantity || 1);
   }, [product]);
@@ -114,9 +109,11 @@ const ProductDetails = () => {
 
   if (error || !product) {
     return (
-      <div className="flex h-[50vh] flex-col items-center justify-center space-y-4">
+      <div className="bg-background flex h-[50vh] flex-col items-center justify-center space-y-4">
         <AlertCircle className="text-destructive h-12 w-12" />
-        <h2 className="text-xl font-semibold">Product not found</h2>
+        <h2 className="text-foreground text-xl font-semibold">
+          Product not found
+        </h2>
         <Button onClick={() => navigate("/all-products")}>
           Back to Products
         </Button>
@@ -127,7 +124,7 @@ const ProductDetails = () => {
   const orderPrice = product.price * selectedQuantity;
 
   return (
-    <div className="animate-in fade-in container mx-auto max-w-7xl px-4 py-8 pb-28 duration-500">
+    <div className="animate-in fade-in bg-background container mx-auto max-w-7xl px-4 py-8 pb-28 duration-500">
       {/* Breadcrumb Navigation */}
       <div className="mb-6 flex items-center justify-between">
         <div className="text-muted-foreground flex items-center gap-2 text-sm">
@@ -140,7 +137,12 @@ const ProductDetails = () => {
           <span>/</span>
           <span className="text-foreground font-medium">{product.name}</span>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
       </div>
@@ -149,7 +151,7 @@ const ProductDetails = () => {
         <div className="space-y-8 lg:col-span-7">
           {/* Main Gallery */}
           <div className="space-y-4">
-            <div className="relative aspect-square w-full overflow-hidden rounded-xl border bg-slate-50 md:aspect-4/3">
+            <div className="border-border bg-muted/30 relative aspect-square w-full overflow-hidden rounded-xl border md:aspect-4/3">
               <img
                 src={
                   product.images[selectedImageIndex] ||
@@ -175,7 +177,7 @@ const ProductDetails = () => {
                     className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
                       selectedImageIndex === idx
                         ? "border-primary ring-primary/20 ring-2"
-                        : "border-transparent hover:border-slate-300"
+                        : "border-border hover:border-muted-foreground/30"
                     }`}
                   >
                     <img
@@ -191,23 +193,23 @@ const ProductDetails = () => {
 
           {/* Info Tabs */}
           <Tabs defaultValue="description" className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+            <TabsList className="border-border w-full justify-start rounded-none border-b bg-transparent p-0">
               <TabsTrigger
                 value="description"
-                className="data-[state=active]:border-primary rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent"
+                className="data-[state=active]:border-primary text-muted-foreground data-[state=active]:text-foreground rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent"
               >
                 Description
               </TabsTrigger>
               <TabsTrigger
                 value="video"
-                className="data-[state=active]:border-primary rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent"
                 disabled={!product.demoVideo}
+                className="data-[state=active]:border-primary text-muted-foreground data-[state=active]:text-foreground rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent"
               >
                 Video Demo
               </TabsTrigger>
               <TabsTrigger
                 value="shipping"
-                className="data-[state=active]:border-primary rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent"
+                className="data-[state=active]:border-primary text-muted-foreground data-[state=active]:text-foreground rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent"
               >
                 Shipping & Returns
               </TabsTrigger>
@@ -217,21 +219,28 @@ const ProductDetails = () => {
               <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
                 {product.description}
               </p>
-
               <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-muted-foreground text-xs">Category</p>
-                  <p className="font-medium capitalize">{product.category}</p>
+                <div className="bg-muted/50 border-border rounded-lg border p-3">
+                  <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                    Category
+                  </p>
+                  <p className="text-foreground font-medium capitalize">
+                    {product.category}
+                  </p>
                 </div>
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-muted-foreground text-xs">Stock</p>
-                  <p className="font-medium">
+                <div className="bg-muted/50 border-border rounded-lg border p-3">
+                  <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                    Stock
+                  </p>
+                  <p className="text-foreground font-medium">
                     {product.availableQuantity} units
                   </p>
                 </div>
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-muted-foreground text-xs">Seller</p>
-                  <p className="font-medium">
+                <div className="bg-muted/50 border-border rounded-lg border p-3">
+                  <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                    Seller
+                  </p>
+                  <p className="text-foreground font-medium">
                     {product.manager?.displayName || "Official Store"}
                   </p>
                 </div>
@@ -240,7 +249,7 @@ const ProductDetails = () => {
 
             <TabsContent value="video" className="mt-6">
               {product.demoVideo ? (
-                <div className="aspect-video overflow-hidden rounded-xl border bg-black">
+                <div className="border-border aspect-video overflow-hidden rounded-xl border bg-black">
                   <iframe
                     src={getYouTubeEmbedUrl(product.demoVideo)}
                     title="Product Demo"
@@ -256,7 +265,7 @@ const ProductDetails = () => {
             <TabsContent value="shipping" className="mt-6">
               <div className="text-muted-foreground space-y-4 text-sm">
                 <div className="flex items-start gap-3">
-                  <Truck className="text-primary h-5 w-5" />
+                  <Truck className="text-chart-1 h-5 w-5" />
                   <div>
                     <p className="text-foreground font-medium">
                       Standard Shipping
@@ -264,9 +273,9 @@ const ProductDetails = () => {
                     <p>Delivery in 3-5 business days.</p>
                   </div>
                 </div>
-                <Separator />
+                <Separator className="bg-border" />
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="text-primary h-5 w-5" />
+                  <ShieldCheck className="text-chart-2 h-5 w-5" />
                   <div>
                     <p className="text-foreground font-medium">
                       Warranty Protection
@@ -281,15 +290,18 @@ const ProductDetails = () => {
 
         {/* Sidebar */}
         <div className="lg:col-span-5">
-          <Card className="sticky top-6 overflow-hidden border-slate-200 shadow-lg">
-            <CardHeader className="bg-slate-50/50 pb-4">
+          <Card className="border-border bg-card sticky top-6 overflow-hidden shadow-lg">
+            <CardHeader className="bg-muted/30 border-border border-b pb-4">
               <div className="flex items-start justify-between">
                 <div>
                   <h1 className="text-foreground text-2xl font-bold tracking-tight">
                     {product.name}
                   </h1>
                   <div className="mt-2 flex items-center gap-2">
-                    <Badge variant="secondary" className="font-normal">
+                    <Badge
+                      variant="secondary"
+                      className="bg-secondary text-secondary-foreground font-normal"
+                    >
                       {product.category}
                     </Badge>
                     {isOutOfStock ? (
@@ -297,7 +309,7 @@ const ProductDetails = () => {
                     ) : (
                       <Badge
                         variant="outline"
-                        className="border-green-200 bg-green-50 text-green-600"
+                        className="border-chart-2/30 bg-chart-2/10 text-chart-2"
                       >
                         <CheckCircle2 className="mr-1 h-3 w-3" /> In Stock
                       </Badge>
@@ -307,7 +319,7 @@ const ProductDetails = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-muted-foreground"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <Share2 className="h-5 w-5" />
                 </Button>
@@ -315,7 +327,6 @@ const ProductDetails = () => {
             </CardHeader>
 
             <CardContent className="space-y-6 pt-6">
-              {/* Price */}
               <div>
                 <span className="text-primary text-4xl font-bold">
                   {formatPrice(product.price)}
@@ -324,19 +335,20 @@ const ProductDetails = () => {
                   / unit
                 </span>
               </div>
+              <Separator className="bg-border" />
 
-              <Separator />
-
-              {/* Quantity Selector */}
+              {/* Quantity */}
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <label className="text-sm font-medium">Quantity</label>
+                  <label className="text-foreground text-sm font-medium">
+                    Quantity
+                  </label>
                   <span className="text-muted-foreground text-xs">
                     Min Order: {product.minOrderQuantity}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center rounded-md border">
+                  <div className="border-border bg-background flex items-center rounded-md border">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -345,11 +357,11 @@ const ProductDetails = () => {
                         selectedQuantity <= product.minOrderQuantity ||
                         isOutOfStock
                       }
-                      className="h-10 w-10 rounded-r-none"
+                      className="border-border h-10 w-10 rounded-r-none border-r"
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
-                    <div className="flex h-10 w-16 items-center justify-center border-x text-center font-semibold">
+                    <div className="text-foreground flex h-10 w-16 items-center justify-center text-center font-semibold">
                       {selectedQuantity}
                     </div>
                     <Button
@@ -360,7 +372,7 @@ const ProductDetails = () => {
                         selectedQuantity >= product.availableQuantity ||
                         isOutOfStock
                       }
-                      className="h-10 w-10 rounded-l-none"
+                      className="border-border h-10 w-10 rounded-l-none border-l"
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -371,62 +383,74 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {/*Payment Options */}
+              {/* Payment */}
               <div className="space-y-3">
-                <label className="text-sm font-medium">Payment Method</label>
+                <label className="text-foreground text-sm font-medium">
+                  Payment Method
+                </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {/* COD Option */}
+                  {/* Cash on Delivery Button */}
                   <button
+                    type="button"
                     onClick={() =>
                       product.paymentOptions.includes("COD") &&
                       setSelectedPaymentOption("COD")
                     }
                     className={`flex flex-col items-center justify-center gap-2 rounded-lg border p-4 transition-all ${
-                      selectedPaymentOption === "COD"
-                        ? "border-primary bg-primary/5 ring-primary text-primary ring-1"
-                        : "hover:border-slate-300 hover:bg-slate-50"
-                    } ${!product.paymentOptions.includes("COD") ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                      product.paymentOptions.includes("COD")
+                        ? "cursor-pointer border-emerald-500/30 bg-emerald-500/5 text-emerald-700 hover:bg-emerald-500/10"
+                        : "border-border bg-muted/20 text-muted-foreground/50 cursor-not-allowed opacity-50"
+                    }`}
                   >
-                    <Banknote className="h-5 w-5" />
-                    <span className="text-sm font-semibold">
+                    <div className="relative">
+                      <Banknote className="h-5 w-5" />
+                      {product.paymentOptions.includes("COD") && (
+                        <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-emerald-500" />
+                      )}
+                    </div>
+                    <span className="text-[10px] font-bold tracking-tighter uppercase">
                       Cash on Delivery
                     </span>
                   </button>
 
-                  {/* Online Payment Option */}
+                  {/* Online Payment Button */}
                   <button
+                    type="button"
                     onClick={() =>
                       product.paymentOptions.includes("PayFirst") &&
                       setSelectedPaymentOption("PayFirst")
                     }
                     className={`flex flex-col items-center justify-center gap-2 rounded-lg border p-4 transition-all ${
-                      selectedPaymentOption === "PayFirst"
-                        ? "border-primary bg-primary/5 ring-primary text-primary ring-1"
-                        : "hover:border-slate-300 hover:bg-slate-50"
-                    } ${!product.paymentOptions.includes("PayFirst") ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                      product.paymentOptions.includes("PayFirst")
+                        ? "cursor-pointer border-emerald-500/30 bg-emerald-500/5 text-emerald-700 hover:bg-emerald-500/10"
+                        : "border-border bg-muted/20 text-muted-foreground/50 cursor-not-allowed opacity-50"
+                    }`}
                   >
-                    <CreditCard className="h-5 w-5" />
-                    <span className="text-sm font-semibold">
+                    <div className="relative">
+                      <CreditCard className="h-5 w-5" />
+                      {product.paymentOptions.includes("PayFirst") && (
+                        <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-emerald-500" />
+                      )}
+                    </div>
+                    <span className="text-[10px] font-bold tracking-tighter uppercase">
                       Online Payment
                     </span>
                   </button>
                 </div>
               </div>
 
-              {/* Total Summary */}
-              <div className="space-y-2 rounded-lg bg-slate-50 p-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    Subtotal ({selectedQuantity} items)
-                  </span>
+              {/* Summary */}
+              <div className="bg-muted/40 border-border space-y-2 rounded-lg border p-4">
+                <div className="text-muted-foreground flex justify-between text-sm">
+                  <span>Subtotal ({selectedQuantity} items)</span>
                   <span>{formatPrice(orderPrice)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span className="font-medium text-green-600">Free</span>
+                  <span className="text-chart-2 font-medium">Free</span>
                 </div>
-                <Separator className="my-2" />
-                <div className="flex justify-between text-lg font-bold">
+                <Separator className="bg-border my-2" />
+                <div className="text-foreground flex justify-between text-lg font-bold">
                   <span>Total</span>
                   <span className="text-primary">
                     {formatPrice(orderPrice)}
@@ -437,7 +461,7 @@ const ProductDetails = () => {
 
             <CardFooter className="flex-col gap-3 pt-2">
               {!canPlaceOrder || isSuspended ? (
-                <div className="w-full rounded-md border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-800">
+                <div className="border-chart-4/30 bg-chart-4/10 text-chart-4 w-full rounded-md border p-3 text-center text-sm font-medium">
                   {isSuspended
                     ? "Suspended users cannot place orders."
                     : !canPlaceOrder
@@ -447,17 +471,15 @@ const ProductDetails = () => {
               ) : (
                 <Button
                   size="lg"
-                  className="w-full text-lg shadow-md transition-all hover:shadow-lg"
-                  disabled={isOutOfStock || isSuspended}
+                  className="w-full text-lg shadow-md"
+                  disabled={isOutOfStock}
                   onClick={() => setShowBookingDialog(true)}
                 >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
+                  <ShoppingCart className="mr-2 h-5 w-5" />{" "}
                   {isOutOfStock ? "Out of Stock" : "Place Order Now"}
                 </Button>
               )}
-
-              {/* Safe Policies */}
-              <div className="text-muted-foreground mt-2 flex w-full items-center justify-center gap-4 text-xs">
+              <div className="text-muted-foreground mt-2 flex w-full items-center justify-center gap-4 text-[10px] font-bold tracking-widest uppercase">
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="h-3 w-3" /> Secure Checkout
                 </span>
@@ -470,7 +492,6 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      {/* Booking Modal */}
       {product && (
         <OrderModal
           open={showBookingDialog}
