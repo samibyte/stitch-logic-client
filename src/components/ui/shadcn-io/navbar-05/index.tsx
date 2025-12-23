@@ -331,10 +331,10 @@ export const Navbar05 = React.forwardRef<
               </NavigationMenuList>
             </NavigationMenu>
           )}
+          <ThemeToggle />
           {user ? (
             <>
               <div className="flex items-center gap-2">
-                <ThemeToggle />
                 <InfoMenu />
                 <NotificationMenu notificationCount={notificationCount} />
               </div>
