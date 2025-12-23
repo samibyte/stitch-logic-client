@@ -20,6 +20,7 @@ import ApprovedOrders from "@/pages/Dashboard/Manager/ApprovedOrders";
 import TrackOrder from "@/pages/TrackOrder/TrackOrder";
 import MyProfile from "@/pages/Dashboard/MyProfile/MyProfile";
 import MyOrders from "@/pages/Dashboard/MyOrders/MyOrders";
+import AboutPage from "@/pages/AboutPage/AboutPage";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
             <ProductDetails />
           </PrivateRouter>
         ),
+      },
+      {
+        path: "/about-us",
+        Component: AboutPage,
       },
     ],
   },
