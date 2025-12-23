@@ -164,7 +164,7 @@ const PendingOrdersTable = () => {
       header: "Order ID",
       cell: (row) => (
         <div>
-          <p className="font-mono font-medium text-gray-900">
+          <p className="text-foreground-900 font-mono font-medium">
             {row.trackingId}
           </p>
           <p className="text-xs text-gray-500">

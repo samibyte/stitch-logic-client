@@ -169,7 +169,7 @@ const ManageProductsTable = () => {
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gray-100">
-                <Package className="h-6 w-6 text-gray-400" />
+                <Package className="h-6 w-6 text-slate-400" />
               </div>
             )}
           </div>
@@ -182,8 +182,10 @@ const ManageProductsTable = () => {
       header: "Name",
       cell: (row) => (
         <div>
-          <p className="font-medium text-gray-900">{row.name}</p>
-          <p className="text-sm text-gray-500 capitalize">{row.category}</p>
+          <p className="text-foreground font-medium">{row.name}</p>
+          <p className="text-foreground/70 text-sm capitalize">
+            {row.category}
+          </p>
         </div>
       ),
       width: "250px",
