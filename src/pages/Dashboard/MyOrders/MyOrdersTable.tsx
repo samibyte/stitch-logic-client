@@ -79,7 +79,6 @@ const MyOrdersTable = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
-  // Debounce search term
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   useEffect(() => {
@@ -91,7 +90,6 @@ const MyOrdersTable = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Fetch buyer's orders
   const {
     data: ordersData = {
       orders: [],
@@ -109,12 +107,7 @@ const MyOrdersTable = () => {
   } = useQuery<OrdersResponse>({
     queryKey: [
       "my-orders",
-      {
-        search: debouncedSearchTerm,
-        status: statusFilter,
-        page,
-        limit,
-      },
+      { search: debouncedSearchTerm, status: statusFilter, page, limit },
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -123,7 +116,6 @@ const MyOrdersTable = () => {
       params.append("page", page.toString());
       params.append("limit", limit.toString());
 
-      // Assuming backend filters orders by current user automatically
       const res = await axiosSecure.get(
         `/orders/my/orders?${params.toString()}`,
       );
@@ -134,8 +126,6 @@ const MyOrdersTable = () => {
 
   const { orders, pagination } = ordersData;
 
-  console.log(orders);
-  // Cancel order mutation
   const cancelOrderMutation = useMutation({
     mutationFn: async (orderId: string) => {
       const res = await axiosSecure.patch(`/orders/${orderId}/cancel`);
@@ -147,25 +137,23 @@ const MyOrdersTable = () => {
     },
     onError: (error: unknown) => {
       const axiosError = error as AxiosError<{ message: string }>;
-
       const errorMessage =
-        axiosError.response?.data?.message || "Failed to update profile";
-
+        axiosError.response?.data?.message || "Failed to cancel order";
       toast.error(errorMessage);
     },
   });
 
-  // Table columns
+  // Updated columns for Dark Mode compatibility
   const columns: ColumnDef<Order>[] = [
     {
       accessorKey: "trackingId",
       header: "Order ID",
       cell: (row) => (
         <div>
-          <p className="font-mono font-medium text-gray-900">
+          <p className="text-foreground font-mono font-medium">
             {row?.trackingId}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-muted-foreground text-xs">
             {new Date(row?.createdAt).toLocaleDateString()}
           </p>
         </div>
@@ -177,11 +165,11 @@ const MyOrdersTable = () => {
       header: "Product",
       cell: (row) => (
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border">
-            {row?.productId.images && row?.productId.images.length > 0 ? (
+          <div className="border-border bg-muted h-10 w-10 shrink-0 overflow-hidden rounded-md border">
+            {row?.productId?.images && row?.productId?.images.length > 0 ? (
               <img
-                src={row?.productId.images[0]}
-                alt={row?.productId.name}
+                src={row?.productId?.images[0]}
+                alt={row?.productId?.name}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   e.currentTarget.src = "/avatar-01.png";
@@ -189,18 +177,20 @@ const MyOrdersTable = () => {
                 loading="lazy"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gray-100">
-                <Package className="h-5 w-5 text-gray-400" />
+              <div className="flex h-full w-full items-center justify-center">
+                <Package className="text-muted-foreground h-5 w-5" />
               </div>
             )}
           </div>
           <div>
-            <p className="font-medium">{row?.productId.name}</p>
-            <p className="text-xs text-gray-500 capitalize">
-              {row?.productId.category}
+            <p className="text-foreground font-medium">
+              {row?.productId?.name}
             </p>
-            <p className="text-xs text-gray-500">
-              ${row?.productId.price.toFixed(2)} each
+            <p className="text-muted-foreground text-xs capitalize">
+              {row?.productId?.category}
+            </p>
+            <p className="text-muted-foreground text-xs">
+              ${row?.productId?.price.toFixed(2)} each
             </p>
           </div>
         </div>
@@ -212,8 +202,8 @@ const MyOrdersTable = () => {
       header: "Quantity",
       cell: (row) => (
         <div>
-          <p className="font-medium">{row?.quantity}</p>
-          <p className="text-xs text-gray-500">
+          <p className="text-foreground font-medium">{row?.quantity}</p>
+          <p className="text-muted-foreground text-xs">
             ${row?.orderPrice.toFixed(2)} total
           </p>
         </div>
@@ -228,36 +218,33 @@ const MyOrdersTable = () => {
           switch (status) {
             case "pending":
               return {
-                bg: "bg-yellow-100",
-                text: "text-yellow-800",
+                className:
+                  "bg-yellow-500/10 text-yellow-600 dark:text-yellow-500",
                 icon: <Clock className="h-4 w-4" />,
                 label: "Pending",
               };
             case "approved":
               return {
-                bg: "bg-green-100",
-                text: "text-green-800",
+                className:
+                  "bg-emerald-500/10 text-emerald-600 dark:text-emerald-500",
                 icon: <CheckCircle className="h-4 w-4" />,
                 label: "Approved",
               };
             case "rejected":
               return {
-                bg: "bg-red-100",
-                text: "text-red-800",
+                className: "bg-red-500/10 text-red-600 dark:text-red-500",
                 icon: <XCircle className="h-4 w-4" />,
                 label: "Rejected",
               };
             case "cancelled":
               return {
-                bg: "bg-gray-100",
-                text: "text-gray-800",
+                className: "bg-muted text-muted-foreground",
                 icon: <Ban className="h-4 w-4" />,
                 label: "Cancelled",
               };
             default:
               return {
-                bg: "bg-gray-100",
-                text: "text-gray-800",
+                className: "bg-muted text-muted-foreground",
                 icon: <AlertCircle className="h-4 w-4" />,
                 label: "Unknown",
               };
@@ -269,12 +256,10 @@ const MyOrdersTable = () => {
         return (
           <Badge
             variant="outline"
-            className={`${config.bg} ${config.text} border-0`}
+            className={`${config.className} flex w-fit items-center gap-1 border-0`}
           >
-            <div className="flex items-center gap-1">
-              {config.icon}
-              {config.label}
-            </div>
+            {config.icon}
+            {config.label}
           </Badge>
         );
       },
@@ -286,7 +271,11 @@ const MyOrdersTable = () => {
       cell: (row) => (
         <Badge
           variant={row?.paymentStatus === "paid" ? "default" : "outline"}
-          className={row?.paymentStatus === "pending" ? "text-orange-600" : ""}
+          className={
+            row?.paymentStatus === "pending"
+              ? "border-orange-500/50 bg-orange-500/5 text-orange-500"
+              : ""
+          }
         >
           {row?.paymentStatus === "paid" ? "Paid" : "Pending"}
         </Badge>
@@ -295,7 +284,6 @@ const MyOrdersTable = () => {
     },
   ];
 
-  // Filters
   const filters = [
     {
       label: "Status",
@@ -315,7 +303,6 @@ const MyOrdersTable = () => {
     },
   ];
 
-  // Summary stats for buyer
   const summaryStats = [
     {
       label: "Total Orders",
@@ -325,34 +312,30 @@ const MyOrdersTable = () => {
     {
       label: "Pending",
       value: orders.filter((o: Order) => o.status === "pending").length,
-      color: "text-yellow-600",
+      color: "text-yellow-500",
       icon: <Clock className="h-4 w-4" />,
     },
     {
       label: "Approved",
       value: orders.filter((o: Order) => o.status === "approved").length,
-      color: "text-green-600",
+      color: "text-emerald-500",
       icon: <CheckCircle className="h-4 w-4" />,
     },
     {
       label: "Cancelled",
       value: orders.filter((o: Order) => o.status === "cancelled").length,
-      color: "text-gray-600",
+      color: "text-muted-foreground",
       icon: <Ban className="h-4 w-4" />,
     },
     {
       label: "Page Info",
       value: `${page} / ${pagination.totalPages}`,
-      color: "text-gray-600",
+      color: "text-muted-foreground",
       icon: <Search className="h-4 w-4" />,
-      tooltip: `Showing ${(page - 1) * limit + 1}-${Math.min(
-        page * limit,
-        pagination.totalItems,
-      )} of ${pagination.totalItems} orders`,
+      tooltip: `Showing ${(page - 1) * limit + 1}-${Math.min(page * limit, pagination.totalItems)} of ${pagination.totalItems} orders`,
     },
   ];
 
-  // Get row actions - only View and Cancel (if pending)
   const getRowActions = (order: Order) => {
     const actions = [
       {
@@ -363,7 +346,6 @@ const MyOrdersTable = () => {
       },
     ];
 
-    // Only show Cancel button for pending orders
     if (order.status === "pending") {
       actions.push({
         label: "Cancel Order",
@@ -376,44 +358,33 @@ const MyOrdersTable = () => {
     return actions;
   };
 
-  // Handle cancel order with confirmation modal
   const handleCancelOrder = async (orderId: string, trackingId: string) => {
+    const isDark = document.documentElement.classList.contains("dark");
+
     const result = await Swal.fire({
       title: "Cancel Order?",
-      html: `<p>Are you sure you want to cancel order <strong>${trackingId}</strong>?</p>
-             <p class="text-sm text-gray-500 mt-2">This action cannot be undone.</p>`,
+      html: `<p class="text-foreground">Are you sure you want to cancel order <strong>${trackingId}</strong>?</p>
+             <p class="text-sm text-muted-foreground mt-2">This action cannot be undone.</p>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6b7280",
+      cancelButtonColor: isDark ? "#27272a" : "#6b7280",
+      background: isDark ? "#09090b" : "#ffffff",
+      color: isDark ? "#fafafa" : "#18181b",
       confirmButtonText: "Yes, cancel order",
       cancelButtonText: "Keep order",
       reverseButtons: true,
     });
 
     if (!result.isConfirmed) return;
-
     cancelOrderMutation.mutate(orderId);
   };
 
-  // Pagination handlers
-  const handleNextPage = () => {
-    if (pagination.hasNextPage) {
-      setPage((prev) => prev + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (pagination.hasPrevPage) {
-      setPage((prev) => prev - 1);
-    }
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-  };
-
-  // Clear all filters
+  const handleNextPage = () =>
+    pagination.hasNextPage && setPage((prev) => prev + 1);
+  const handlePrevPage = () =>
+    pagination.hasPrevPage && setPage((prev) => prev - 1);
+  const handlePageChange = (newPage: number) => setPage(newPage);
   const handleClearFilters = () => {
     setSearchTerm("");
     setStatusFilter("all");
@@ -421,7 +392,7 @@ const MyOrdersTable = () => {
   };
 
   return (
-    <div>
+    <div className="bg-background">
       <DataTable
         data={orders}
         columns={columns}
@@ -432,7 +403,6 @@ const MyOrdersTable = () => {
         filters={filters}
         summaryStats={summaryStats}
         emptyMessage="You haven't placed any orders yet"
-        // Pagination props
         pagination={{
           currentPage: pagination.currentPage,
           totalPages: pagination.totalPages,
@@ -442,12 +412,9 @@ const MyOrdersTable = () => {
           onPrevPage: handlePrevPage,
           onPageChange: handlePageChange,
         }}
-        // Clear filters button
         showClearFilters={statusFilter !== "all" || searchTerm !== ""}
         onClearFilters={handleClearFilters}
-        // Loading state
         skeletonCount={limit}
-        // Custom row actions
         getRowActions={getRowActions}
       />
     </div>

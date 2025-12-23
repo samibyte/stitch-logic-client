@@ -59,31 +59,24 @@ const ManageUsersTable = () => {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
 
-  // Debounce search term to avoid too many API calls
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
 
   const handleSearchChange = useCallback(
     (value: string) => {
       setSearchTerm(value);
+      if (searchTimeout) clearTimeout(searchTimeout);
 
-      // Clear previous timeout
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
-      }
-
-      // Set new timeout for debouncing
       const timeout = setTimeout(() => {
         setDebouncedSearchTerm(value);
-        setPage(1); // Reset to first page on new search
-      }, 500); // 500ms debounce delay
+        setPage(1);
+      }, 500);
 
       setSearchTimeout(timeout);
     },
     [searchTimeout],
   );
 
-  // Fetch users with server-side filtering
   const {
     data: usersData = {
       users: [],
@@ -111,7 +104,6 @@ const ManageUsersTable = () => {
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
-
       if (debouncedSearchTerm) params.append("searchText", debouncedSearchTerm);
       if (roleFilter !== "all") params.append("role", roleFilter);
       if (statusFilter !== "all") params.append("status", statusFilter);
@@ -174,9 +166,7 @@ const ManageUsersTable = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("Role updated successfully");
     },
-    onError: () => {
-      toast.error("Failed to update role");
-    },
+    onError: () => toast.error("Failed to update role"),
   });
 
   const deleteUserMutation = useMutation({
@@ -188,12 +178,9 @@ const ManageUsersTable = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("User deleted successfully");
     },
-    onError: () => {
-      toast.error("Failed to delete user");
-    },
+    onError: () => toast.error("Failed to delete user"),
   });
 
-  // Table columns
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "displayName",
@@ -203,6 +190,7 @@ const ManageUsersTable = () => {
           image={row.photoURL}
           name={row.displayName}
           subtitle={`ID: ${row._id.slice(-6)}`}
+          className="text-foreground"
         />
       ),
       width: "250px",
@@ -223,15 +211,30 @@ const ManageUsersTable = () => {
             }
             disabled={updateUserRoleMutation.isPending}
           >
-            <SelectTrigger className="capitalize">
+            <SelectTrigger className="bg-background border-border hover:bg-muted/50 capitalize transition-colors">
               <SelectValue>
                 <StatusBadge status={row.role} />
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="manager">Manager</SelectItem>
-              <SelectItem value="buyer">Buyer</SelectItem>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem
+                value="admin"
+                className="focus:bg-muted focus:text-foreground"
+              >
+                Admin
+              </SelectItem>
+              <SelectItem
+                value="manager"
+                className="focus:bg-muted focus:text-foreground"
+              >
+                Manager
+              </SelectItem>
+              <SelectItem
+                value="buyer"
+                className="focus:bg-muted focus:text-foreground"
+              >
+                Buyer
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -245,12 +248,15 @@ const ManageUsersTable = () => {
     {
       accessorKey: "createdAt",
       header: "Created At",
-      cell: (row) =>
-        new Date(row.createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }),
+      cell: (row) => (
+        <span className="text-muted-foreground">
+          {new Date(row.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </span>
+      ),
     },
   ];
 
@@ -266,7 +272,7 @@ const ManageUsersTable = () => {
       ],
       onValueChange: (value: string) => {
         setRoleFilter(value);
-        setPage(1); // Reset to first page
+        setPage(1);
       },
       icon: <User className="h-4 w-4" />,
     },
@@ -287,7 +293,6 @@ const ManageUsersTable = () => {
     },
   ];
 
-  // Summary stats
   const summaryStats = [
     {
       label: "Total Users",
@@ -297,31 +302,30 @@ const ManageUsersTable = () => {
     {
       label: "Admins",
       value: users.filter((u: User) => u.role === "admin").length,
-      color: "text-red-600",
+      color: "text-chart-1", // Changed from red-600 to theme chart color
       icon: <Shield className="h-4 w-4" />,
     },
     {
       label: "Managers",
       value: users.filter((u: User) => u.role === "manager").length,
-      color: "text-blue-600",
+      color: "text-chart-2", // Changed from blue-600
       icon: <User className="h-4 w-4" />,
     },
     {
       label: "Buyers",
       value: users.filter((u: User) => u.role === "buyer").length,
-      color: "text-green-600",
+      color: "text-chart-3", // Changed from green-600
       icon: <User className="h-4 w-4" />,
     },
     {
       label: "Page Info",
       value: `${page} / ${pagination.totalPages}`,
-      color: "text-gray-600",
+      color: "text-muted-foreground",
       icon: <Search className="h-4 w-4" />,
       tooltip: `Showing ${(page - 1) * limit + 1}-${Math.min(page * limit, pagination.totalItems)} of ${pagination.totalItems} users`,
     },
   ];
 
-  // Table actions
   const actions = [
     {
       label: "Update User",
@@ -337,65 +341,42 @@ const ManageUsersTable = () => {
     },
   ];
 
-  // Handlers
-  const handleStatusUpdate = async (status: UserStatus) => {
-    if (!selectedUser) return;
-
-    updateUserMutation.mutate(
-      { userId: selectedUser._id, status },
-      {
-        onSuccess: () => {
-          setIsEditDialogOpen(false);
-          setSelectedUser(null);
-        },
-      },
-    );
-  };
-
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
-    if (newRole === "admin") {
-      const result = await Swal.fire({
-        title: "Make User an Admin?",
-        text: "This user will gain admin privileges. Are you sure?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, make admin",
-      });
+    const isDark = document.documentElement.classList.contains("dark");
 
-      if (!result.isConfirmed) return;
-    } else if (newRole === "manager") {
+    if (newRole === "admin" || newRole === "manager") {
       const result = await Swal.fire({
-        title: "Make User a Manager?",
-        text: "This user will gain manager privileges. Are you sure?",
+        title: `Make User a ${newRole === "admin" ? "Admin" : "Manager"}?`,
+        text: `This user will gain ${newRole} privileges. Are you sure?`,
         icon: "question",
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, make manager",
+        confirmButtonColor: "hsl(var(--primary))",
+        cancelButtonColor: "hsl(var(--destructive))",
+        background: isDark ? "hsl(var(--card))" : "#fff",
+        color: isDark ? "hsl(var(--foreground))" : "#000",
+        confirmButtonText: `Yes, make ${newRole}`,
       });
 
       if (!result.isConfirmed) return;
     }
-
     updateUserRoleMutation.mutate({ userId, newRole });
   };
 
   const handleDeleteUser = async (userId: string) => {
+    const isDark = document.documentElement.classList.contains("dark");
     const result = await Swal.fire({
       title: "Delete User?",
       text: "This action cannot be undone!",
       icon: "error",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "hsl(var(--destructive))",
+      cancelButtonColor: "hsl(var(--secondary))",
+      background: isDark ? "hsl(var(--card))" : "#fff",
+      color: isDark ? "hsl(var(--foreground))" : "#000",
       confirmButtonText: "Yes, delete",
-      cancelButtonText: "Cancel",
     });
 
     if (!result.isConfirmed) return;
-
     deleteUserMutation.mutate(userId);
   };
 
@@ -409,34 +390,8 @@ const ManageUsersTable = () => {
     setIsSuspendDialogOpen(true);
   };
 
-  // Pagination handlers
-  const handleNextPage = () => {
-    if (pagination.hasNextPage) {
-      setPage((prev) => prev + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (pagination.hasPrevPage) {
-      setPage((prev) => prev - 1);
-    }
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-  };
-
-  // Clear all filters
-  const handleClearFilters = () => {
-    setSearchTerm("");
-    setDebouncedSearchTerm("");
-    setRoleFilter("all");
-    setStatusFilter("all");
-    setPage(1);
-  };
-
   return (
-    <div>
+    <div className="bg-background text-foreground min-h-screen">
       <DataTable
         data={users}
         columns={columns}
@@ -450,33 +405,48 @@ const ManageUsersTable = () => {
         addButtonLabel="Add User"
         summaryStats={summaryStats}
         emptyMessage="No users found matching your criteria"
-        // Pagination props
         pagination={{
           currentPage: pagination.currentPage,
           totalPages: pagination.totalPages,
           totalItems: pagination.totalItems,
           itemsPerPage: pagination.itemsPerPage,
-          onNextPage: handleNextPage,
-          onPrevPage: handlePrevPage,
-          onPageChange: handlePageChange,
+          onNextPage: () =>
+            pagination.hasNextPage && setPage((prev) => prev + 1),
+          onPrevPage: () =>
+            pagination.hasPrevPage && setPage((prev) => prev - 1),
+          onPageChange: (newPage) => setPage(newPage),
         }}
-        // Clear filters button
         showClearFilters={
           roleFilter !== "all" || statusFilter !== "all" || searchTerm !== ""
         }
-        onClearFilters={handleClearFilters}
-        // Loading state
+        onClearFilters={() => {
+          setSearchTerm("");
+          setDebouncedSearchTerm("");
+          setRoleFilter("all");
+          setStatusFilter("all");
+          setPage(1);
+        }}
         skeletonCount={limit}
       />
 
-      {/* Additional Dialogs */}
       <AddUserModal
         isAddDialogOpen={isAddDialogOpen}
         setIsAddDialogOpen={setIsAddDialogOpen}
       />
       <EditUserModal
         user={selectedUser}
-        onUpdateStatus={handleStatusUpdate}
+        onUpdateStatus={(status) => {
+          if (!selectedUser) return;
+          updateUserMutation.mutate(
+            { userId: selectedUser._id, status },
+            {
+              onSuccess: () => {
+                setIsEditDialogOpen(false);
+                setSelectedUser(null);
+              },
+            },
+          );
+        }}
         onSuspendClick={handleOpenSuspendFromEdit}
         isEditDialogOpen={isEditDialogOpen}
         setIsEditDialogOpen={setIsEditDialogOpen}

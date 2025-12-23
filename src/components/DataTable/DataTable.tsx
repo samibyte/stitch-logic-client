@@ -67,18 +67,12 @@ export type SummaryStat = {
 };
 
 interface DataTableProps<T> {
-  // Data
   data: T[];
   columns: ColumnDef<T>[];
-
-  // Loading
   isLoading: boolean;
-
-  // Search & Filters
   searchTerm: string;
   onSearchChange: (value: string) => void;
   searchPlaceholder?: string;
-
   filters?: {
     label: string;
     value: string;
@@ -86,23 +80,13 @@ interface DataTableProps<T> {
     onValueChange: (value: string) => void;
     icon?: ReactNode;
   }[];
-
-  // Actions
   actions?: Action<T>[];
   onAdd?: () => void;
   addButtonLabel?: string;
-
-  // Summary Stats
   summaryStats?: SummaryStat[];
-
-  // Selection
   onRowClick?: (row: T) => void;
-
-  // Customization
   emptyMessage?: string;
   tableClassName?: string;
-
-  // Pagination
   pagination?: {
     currentPage: number;
     totalPages: number;
@@ -112,12 +96,8 @@ interface DataTableProps<T> {
     onPrevPage: () => void;
     onPageChange: (page: number) => void;
   };
-
-  // Clear Filters
   showClearFilters?: boolean;
   onClearFilters?: () => void;
-
-  // Loading Skeletons
   skeletonCount?: number;
   getRowActions?: (row: T) => Action<T>[];
 }
@@ -144,29 +124,24 @@ export function DataTable<T>({
   getRowActions,
 }: DataTableProps<T>) {
   const renderCell = (row: T, column: ColumnDef<T>) => {
-    if (column.cell) {
-      return column.cell(row);
-    }
-
+    if (column.cell) return column.cell(row);
     const value = row[column.accessorKey as keyof T];
     return value as ReactNode;
   };
 
-  // Calculate if any rows have actions (to show/hide actions column)
   const hasAnyActions = actions.length > 0 || getRowActions !== undefined;
 
-  // Generate skeleton rows
   const skeletonRows = Array.from({ length: skeletonCount }).map((_, index) => (
     <TableRow key={`skeleton-${index}`}>
       {columns.map((column) => (
         <TableCell key={`skeleton-${String(column.accessorKey)}-${index}`}>
-          <div className="h-6 animate-pulse rounded bg-gray-200"></div>
+          <div className="bg-muted h-6 animate-pulse rounded"></div>
         </TableCell>
       ))}
       {hasAnyActions && (
         <TableCell>
           <div className="flex justify-end">
-            <div className="h-8 w-8 animate-pulse rounded bg-gray-200"></div>
+            <div className="bg-muted h-8 w-8 animate-pulse rounded"></div>
           </div>
         </TableCell>
       )}
@@ -174,22 +149,24 @@ export function DataTable<T>({
   ));
 
   return (
-    <div className="space-y-6">
+    <div className="text-foreground space-y-6">
       {/* Summary Stats */}
       {summaryStats.length > 0 && (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
           {summaryStats.map((stat, index) => (
             <div
               key={index}
-              className="rounded-lg border bg-white p-4 shadow-sm"
+              className="border-border bg-card rounded-lg border p-4 shadow-sm"
               title={stat.tooltip}
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-500">{stat.label}</p>
-                {stat.icon && <div className="text-gray-400">{stat.icon}</div>}
+                <p className="text-muted-foreground text-sm">{stat.label}</p>
+                {stat.icon && (
+                  <div className="text-muted-foreground/60">{stat.icon}</div>
+                )}
               </div>
               <p
-                className={`text-2xl font-bold ${stat.color || "text-gray-900"}`}
+                className={`text-2xl font-bold ${stat.color || "text-foreground"}`}
               >
                 {stat.value}
               </p>
@@ -201,18 +178,16 @@ export function DataTable<T>({
       {/* Header with search and filters */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row">
-          {/* Search */}
           <div className="relative max-w-md flex-1">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
             <Input
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10"
+              className="bg-background border-border pl-10"
             />
           </div>
 
-          {/* Filters */}
           {filters.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {filters.map((filter) => (
@@ -221,13 +196,13 @@ export function DataTable<T>({
                   value={filter.value}
                   onValueChange={filter.onValueChange}
                 >
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="bg-background border-border w-[150px]">
                     <div className="flex items-center gap-2">
                       {filter.icon}
                       <span>{filter.label}</span>
                     </div>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover text-popover-foreground border-border">
                     {filter.options.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
@@ -237,13 +212,12 @@ export function DataTable<T>({
                 </Select>
               ))}
 
-              {/* Clear Filters Button */}
               {showClearFilters && onClearFilters && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onClearFilters}
-                  className="h-10 gap-2"
+                  className="border-border h-10 gap-2"
                 >
                   <X className="h-4 w-4" />
                   Clear
@@ -253,31 +227,35 @@ export function DataTable<T>({
           )}
         </div>
 
-        {/* Add Button */}
         {onAdd && (
-          <Button className="gap-2" onClick={onAdd}>
+          <Button
+            className="bg-primary text-primary-foreground gap-2"
+            onClick={onAdd}
+          >
             <Plus className="h-4 w-4" />
             {addButtonLabel}
           </Button>
         )}
       </div>
 
-      {/* Table */}
-      <div className="rounded-md border bg-white">
+      {/* Table Container */}
+      <div className="border-border bg-card rounded-md border">
         <Table className={tableClassName}>
-          <TableHeader>
-            <TableRow>
+          <TableHeader className="bg-muted/50">
+            <TableRow className="border-border hover:bg-transparent">
               {columns.map((column) => (
                 <TableHead
                   key={String(column.accessorKey)}
-                  className={column.className}
+                  className={`text-muted-foreground font-semibold ${column.className}`}
                   style={{ width: column.width }}
                 >
                   {column.header}
                 </TableHead>
               ))}
               {hasAnyActions && (
-                <TableHead className="w-[100px] text-right">Actions</TableHead>
+                <TableHead className="text-muted-foreground w-[100px] text-right font-semibold">
+                  Actions
+                </TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -288,15 +266,17 @@ export function DataTable<T>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length + (hasAnyActions ? 1 : 0)}
-                  className="py-12 text-center text-gray-500"
+                  className="text-muted-foreground py-12 text-center"
                 >
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="rounded-full bg-gray-100 p-3">
-                      <Search className="h-6 w-6 text-gray-400" />
+                    <div className="bg-muted rounded-full p-3">
+                      <Search className="text-muted-foreground/60 h-6 w-6" />
                     </div>
-                    <p className="text-lg font-medium">{emptyMessage}</p>
+                    <p className="text-foreground text-lg font-medium">
+                      {emptyMessage}
+                    </p>
                     {searchTerm && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm">
                         Try adjusting your search or filters
                       </p>
                     )}
@@ -305,23 +285,23 @@ export function DataTable<T>({
               </TableRow>
             ) : (
               data.map((row, index) => {
-                // Get actions for this specific row
                 const rowActions = getRowActions ? getRowActions(row) : actions;
-
                 const hasRowActions = rowActions.length > 0;
 
                 return (
                   <TableRow
                     key={index}
-                    className={
-                      onRowClick ? "cursor-pointer hover:bg-gray-50" : ""
-                    }
+                    className={`border-border transition-colors ${
+                      onRowClick
+                        ? "hover:bg-muted/30 cursor-pointer"
+                        : "hover:bg-muted/10"
+                    }`}
                     onClick={() => onRowClick && onRowClick(row)}
                   >
                     {columns.map((column) => (
                       <TableCell
                         key={String(column.accessorKey)}
-                        className={column.className}
+                        className={`text-foreground ${column.className}`}
                       >
                         {renderCell(row, column)}
                       </TableCell>
@@ -335,11 +315,18 @@ export function DataTable<T>({
                               asChild
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Button variant="ghost" size="icon">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-muted"
+                              >
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent
+                              align="end"
+                              className="bg-popover border-border"
+                            >
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               {rowActions.map((action, actionIndex) => (
                                 <DropdownMenuItem
@@ -350,8 +337,8 @@ export function DataTable<T>({
                                   }}
                                   className={
                                     action.variant === "destructive"
-                                      ? "text-red-600 focus:text-red-600"
-                                      : ""
+                                      ? "text-destructive focus:bg-destructive focus:text-destructive-foreground"
+                                      : "focus:bg-muted"
                                   }
                                   disabled={action.disabled?.(row)}
                                 >
@@ -364,7 +351,6 @@ export function DataTable<T>({
                             </DropdownMenuContent>
                           </DropdownMenu>
                         ) : (
-                          // Empty cell to maintain table layout
                           <div className="h-8 w-8"></div>
                         )}
                       </TableCell>
@@ -378,8 +364,8 @@ export function DataTable<T>({
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between border-t px-4 py-4">
-            <div className="text-sm text-gray-600">
+          <div className="border-border bg-muted/20 flex items-center justify-between border-t px-4 py-4">
+            <div className="text-muted-foreground text-sm">
               Page {pagination.currentPage} of {pagination.totalPages}
             </div>
 
@@ -394,14 +380,13 @@ export function DataTable<T>({
                     className={
                       pagination.currentPage === 1
                         ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
+                        : "hover:bg-muted cursor-pointer"
                     }
                   />
                 </PaginationItem>
 
-                {/* Simple page indicator */}
                 <PaginationItem>
-                  <span className="px-4 text-sm">
+                  <span className="px-4 text-sm font-medium">
                     {pagination.currentPage} / {pagination.totalPages}
                   </span>
                 </PaginationItem>
@@ -415,7 +400,7 @@ export function DataTable<T>({
                     className={
                       pagination.currentPage === pagination.totalPages
                         ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
+                        : "hover:bg-muted cursor-pointer"
                     }
                   />
                 </PaginationItem>

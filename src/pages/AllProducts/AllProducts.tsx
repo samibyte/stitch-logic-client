@@ -135,24 +135,29 @@ const AllProducts = () => {
       {/* Header Section */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
+          <h1 className="text-foreground text-3xl font-bold tracking-tight">
+            Marketplace
+          </h1>
           <p className="text-muted-foreground">
             Discover quality products from our verified managers.
           </p>
         </div>
-        <Badge variant="outline" className="w-fit px-3 py-1 text-sm">
+        <Badge
+          variant="outline"
+          className="border-border w-fit px-3 py-1 text-sm"
+        >
           {productsData?.pagination.totalItems || 0} Total Products
         </Badge>
       </div>
 
       {/* Filter Toolbar */}
-      <Card className="bg-slate-50/50">
+      <Card className="bg-muted/40 border-border">
         <CardContent className="flex flex-col gap-4 p-4 lg:flex-row">
           <div className="relative flex-1">
             <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Search by name, category..."
-              className="bg-white pl-10"
+              className="bg-background border-border focus:ring-ring pl-10"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
@@ -166,10 +171,10 @@ const AllProducts = () => {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((c) => (
                   <SelectItem key={c} value={c}>
@@ -186,10 +191,10 @@ const AllProducts = () => {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Price Range" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="all">Any Price</SelectItem>
                 <SelectItem value="low">Under $50</SelectItem>
                 <SelectItem value="medium">$50 - $200</SelectItem>
@@ -206,10 +211,10 @@ const AllProducts = () => {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="createdAt:desc">Latest</SelectItem>
                 <SelectItem value="price:asc">Price: Low to High</SelectItem>
                 <SelectItem value="price:desc">Price: High to Low</SelectItem>
@@ -220,7 +225,7 @@ const AllProducts = () => {
             <Button
               variant="ghost"
               onClick={resetFilters}
-              className="text-muted-foreground hover:text-primary"
+              className="text-muted-foreground hover:text-primary hover:bg-accent"
             >
               <FilterX className="mr-2 h-4 w-4" /> Reset
             </Button>
@@ -234,14 +239,16 @@ const AllProducts = () => {
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="h-[400px] animate-pulse rounded-xl bg-slate-100"
+              className="bg-muted h-[400px] animate-pulse rounded-xl"
             />
           ))}
         </div>
       ) : productsData?.products.length === 0 ? (
-        <div className="rounded-xl border-2 border-dashed py-20 text-center">
+        <div className="border-border bg-card/50 rounded-xl border-2 border-dashed py-20 text-center">
           <Package className="text-muted-foreground/50 mx-auto h-12 w-12" />
-          <h3 className="mt-4 text-lg font-medium">No products found</h3>
+          <h3 className="text-foreground mt-4 text-lg font-medium">
+            No products found
+          </h3>
           <p className="text-muted-foreground">
             Try adjusting your filters or search terms.
           </p>
@@ -258,7 +265,7 @@ const AllProducts = () => {
 
       {/* Pagination Footer */}
       {productsData && productsData.pagination.totalPages > 1 && (
-        <div className="flex flex-col items-center justify-between gap-4 border-t pt-6 sm:flex-row">
+        <div className="border-border flex flex-col items-center justify-between gap-4 border-t pt-6 sm:flex-row">
           <p className="text-muted-foreground text-sm">
             Page {productsData.pagination.currentPage} of{" "}
             {productsData.pagination.totalPages}
@@ -267,6 +274,7 @@ const AllProducts = () => {
             <Button
               variant="outline"
               size="sm"
+              className="border-border hover:bg-accent"
               disabled={!productsData.pagination.hasPrevPage}
               onClick={() => {
                 setPage((p) => p - 1);
@@ -278,6 +286,7 @@ const AllProducts = () => {
             <Button
               variant="outline"
               size="sm"
+              className="border-border hover:bg-accent"
               disabled={!productsData.pagination.hasNextPage}
               onClick={() => {
                 setPage((p) => p + 1);

@@ -1,8 +1,26 @@
 import Footer from "@/pages/Home/Shared/Footer";
 import Navbar from "@/pages/Home/Shared/Navbar";
-import { Outlet } from "react-router";
+import { useEffect } from "react";
+import { Outlet, useSearchParams } from "react-router";
+import { toast } from "sonner";
 
 const RootLayout = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("payment_success") === "true") {
+      const tid = searchParams.get("id");
+
+      toast.success("Payment Successful!", {
+        description: `Order ${tid} is now being processed.`,
+      });
+
+      searchParams.delete("payment_success");
+      searchParams.delete("id");
+      setSearchParams(searchParams);
+    }
+  }, [searchParams, setSearchParams]);
+
   return (
     <div>
       <header>
