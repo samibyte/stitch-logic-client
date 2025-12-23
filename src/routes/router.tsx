@@ -21,6 +21,7 @@ import TrackOrder from "@/pages/TrackOrder/TrackOrder";
 import MyProfile from "@/pages/Dashboard/MyProfile/MyProfile";
 import MyOrders from "@/pages/Dashboard/MyOrders/MyOrders";
 import AboutPage from "@/pages/AboutPage/AboutPage";
+import Contact from "@/pages/Contact/Contact";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: "/about-us",
         Component: AboutPage,
+      },
+      {
+        path: "/contact",
+        Component: Contact,
       },
     ],
   },
