@@ -72,7 +72,6 @@ const AllProductsTable = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  // Debounce search term
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   useEffect(() => {
@@ -84,7 +83,14 @@ const AllProductsTable = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Fetch products with server-side filtering
+  const { data: categories = [] } = useQuery<string[]>({
+    queryKey: ["product-categories"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/products/categories");
+      return res.data;
+    },
+  });
+
   const {
     data: productsData = {
       products: [],
@@ -130,7 +136,6 @@ const AllProductsTable = () => {
 
   const { products, pagination } = productsData;
 
-  // Toggle Show on Home mutation
   const toggleShowOnHomeMutation = useMutation({
     mutationFn: async ({
       productId,
@@ -156,7 +161,6 @@ const AllProductsTable = () => {
     },
   });
 
-  // Update product mutation
   const updateProductMutation = useMutation({
     mutationFn: async (updatedProduct: Partial<Product>) => {
       const res = await axiosSecure.patch(
@@ -176,7 +180,6 @@ const AllProductsTable = () => {
     },
   });
 
-  // Delete product mutation
   const deleteProductMutation = useMutation({
     mutationFn: async (productId: string) => {
       const res = await axiosSecure.delete(`/products/${productId}`);
@@ -191,14 +194,14 @@ const AllProductsTable = () => {
     },
   });
 
-  // Table columns
+  // Table columns updated for Dark Mode
   const columns: ColumnDef<Product>[] = [
     {
       accessorKey: "images",
       header: "Image",
       cell: (row) => (
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border">
+          <div className="border-border bg-muted h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border">
             {row.images && row.images.length > 0 ? (
               <img
                 src={row.images[0]}
@@ -206,14 +209,16 @@ const AllProductsTable = () => {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gray-100">
-                <Package className="h-6 w-6 text-gray-400" />
+              <div className="bg-muted flex h-full w-full items-center justify-center">
+                <Package className="text-muted-foreground h-6 w-6" />
               </div>
             )}
           </div>
           <div>
-            <p className="font-medium text-gray-900">{row.name}</p>
-            <p className="text-xs text-gray-500">ID: {row._id.slice(-6)}</p>
+            <p className="text-foreground font-medium">{row.name}</p>
+            <p className="text-muted-foreground text-xs">
+              ID: {row._id.slice(-6)}
+            </p>
           </div>
         </div>
       ),
@@ -223,9 +228,9 @@ const AllProductsTable = () => {
       accessorKey: "price",
       header: "Price",
       cell: (row) => (
-        <div className="font-medium">
+        <div className="text-foreground font-medium">
           ${row.price.toFixed(2)}
-          <p className="text-xs text-gray-500">
+          <p className="text-muted-foreground text-xs">
             Stock: {row.availableQuantity}
           </p>
         </div>
@@ -235,7 +240,10 @@ const AllProductsTable = () => {
       accessorKey: "category",
       header: "Category",
       cell: (row) => (
-        <Badge variant="outline" className="capitalize">
+        <Badge
+          variant="outline"
+          className="text-foreground border-border capitalize"
+        >
           {row.category}
         </Badge>
       ),
@@ -247,11 +255,15 @@ const AllProductsTable = () => {
         <div>
           {row.manager ? (
             <>
-              <p className="font-medium">{row.manager.displayName}</p>
-              <p className="text-xs text-gray-500">{row.manager.email}</p>
+              <p className="text-foreground font-medium">
+                {row.manager.displayName}
+              </p>
+              <p className="text-muted-foreground text-xs">
+                {row.manager.email}
+              </p>
             </>
           ) : (
-            <span className="text-gray-500">System</span>
+            <span className="text-muted-foreground">System</span>
           )}
         </div>
       ),
@@ -270,12 +282,12 @@ const AllProductsTable = () => {
           />
           <span className="ml-2 text-sm">
             {row.showOnHome ? (
-              <span className="flex items-center text-green-600">
+              <span className="flex items-center font-medium text-emerald-500">
                 <Eye className="mr-1 h-4 w-4" />
                 Showing
               </span>
             ) : (
-              <span className="flex items-center text-gray-500">
+              <span className="text-muted-foreground flex items-center">
                 <EyeOff className="mr-1 h-4 w-4" />
                 Hidden
               </span>
@@ -290,7 +302,7 @@ const AllProductsTable = () => {
       cell: (row) => {
         const options = row.paymentOptions as string[];
         return (
-          <Badge variant="outline">
+          <Badge variant="outline" className="text-foreground border-border">
             {options
               .map((opt) => (opt === "PayFirst" ? "Pay first" : "COD"))
               .join(" & ")}
@@ -301,27 +313,28 @@ const AllProductsTable = () => {
     {
       accessorKey: "createdAt",
       header: "Created At",
-      cell: (row) =>
-        new Date(row.createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }),
+      cell: (row) => (
+        <span className="text-foreground">
+          {new Date(row.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </span>
+      ),
     },
   ];
 
-  // Filters
   const filters = [
     {
       label: "Category",
       value: categoryFilter,
       options: [
         { value: "all", label: "All Categories" },
-        { value: "men", label: "Men's Wear" },
-        { value: "women", label: "Women's Wear" },
-        { value: "kids", label: "Kids' Wear" },
-        { value: "accessories", label: "Accessories" },
-        { value: "footwear", label: "Footwear" },
+        ...categories.map((c) => ({
+          value: c,
+          label: c.charAt(0).toUpperCase() + c.slice(1),
+        })),
       ],
       onValueChange: (value: string) => {
         setCategoryFilter(value);
@@ -360,7 +373,6 @@ const AllProductsTable = () => {
     },
   ];
 
-  // Summary stats
   const summaryStats = [
     {
       label: "Total Products",
@@ -370,7 +382,7 @@ const AllProductsTable = () => {
     {
       label: "On Home Page",
       value: products.filter((p: Product) => p.showOnHome).length,
-      color: "text-green-600",
+      color: "text-emerald-500",
       icon: <Home className="h-4 w-4" />,
       tooltip: "Products showing on home page",
     },
@@ -383,21 +395,21 @@ const AllProductsTable = () => {
           0,
         )
         .toLocaleString()}`,
-      color: "text-blue-600",
+      color: "text-blue-500",
       icon: <DollarSign className="h-4 w-4" />,
       tooltip: "Total inventory value",
     },
     {
       label: "Categories",
       value: new Set(products.map((p: Product) => p.category)).size,
-      color: "text-purple-600",
+      color: "text-purple-500",
       icon: <Tag className="h-4 w-4" />,
       tooltip: "Unique categories",
     },
     {
       label: "Page Info",
       value: `${page} / ${pagination.totalPages}`,
-      color: "text-gray-600",
+      color: "text-muted-foreground",
       icon: <Search className="h-4 w-4" />,
       tooltip: `Showing ${(page - 1) * limit + 1}-${Math.min(
         page * limit,
@@ -406,7 +418,6 @@ const AllProductsTable = () => {
     },
   ];
 
-  // Table actions
   const actions = [
     {
       label: "Edit Product",
@@ -423,7 +434,6 @@ const AllProductsTable = () => {
     },
   ];
 
-  // Handlers
   const handleToggleShowOnHome = async (
     productId: string,
     showOnHome: boolean,
@@ -437,13 +447,17 @@ const AllProductsTable = () => {
   };
 
   const handleDeleteProduct = async (productId: string) => {
+    const isDark = document.documentElement.classList.contains("dark");
+
     const result = await Swal.fire({
       title: "Delete Product?",
-      text: "This action cannot be undone! All associated data will be removed.",
+      text: "This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: isDark ? "#27272a" : "#3085d6",
+      background: isDark ? "#09090b" : "#fff",
+      color: isDark ? "#fafafa" : "#000",
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
       reverseButtons: true,
@@ -458,7 +472,6 @@ const AllProductsTable = () => {
     updateProductMutation.mutate(updatedProduct);
   };
 
-  // Pagination handlers
   const handleNextPage = () => {
     if (pagination.hasNextPage) {
       setPage((prev) => prev + 1);
@@ -475,7 +488,6 @@ const AllProductsTable = () => {
     setPage(newPage);
   };
 
-  // Clear all filters
   const handleClearFilters = () => {
     setSearchTerm("");
     setDebouncedSearchTerm("");
@@ -486,7 +498,7 @@ const AllProductsTable = () => {
   };
 
   return (
-    <div>
+    <div className="text-foreground bg-background">
       <DataTable
         data={products}
         columns={columns}
@@ -500,7 +512,6 @@ const AllProductsTable = () => {
         addButtonLabel="Add Product"
         summaryStats={summaryStats}
         emptyMessage="No products found matching your criteria"
-        // Pagination props
         pagination={{
           currentPage: pagination.currentPage,
           totalPages: pagination.totalPages,
@@ -510,7 +521,6 @@ const AllProductsTable = () => {
           onPrevPage: handlePrevPage,
           onPageChange: handlePageChange,
         }}
-        // Clear filters button
         showClearFilters={
           categoryFilter !== "all" ||
           priceFilter !== "all" ||
@@ -518,11 +528,9 @@ const AllProductsTable = () => {
           searchTerm !== ""
         }
         onClearFilters={handleClearFilters}
-        // Loading state
         skeletonCount={limit}
       />
 
-      {/* Edit Product Modal */}
       <EditProductModal
         product={selectedProduct}
         isOpen={isEditDialogOpen}
@@ -534,7 +542,6 @@ const AllProductsTable = () => {
         isLoading={updateProductMutation.isPending}
       />
 
-      {/* Add Product Modal */}
       <AddProductModal
         isAddDialogOpen={isAddDialogOpen}
         setIsAddDialogOpen={setIsAddDialogOpen}
